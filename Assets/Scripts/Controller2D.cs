@@ -15,7 +15,7 @@ public class Controller2D : RaycastController {
         
     }
 
-    public void Move(Vector3 velocity) {
+    public void Move(Vector3 velocity, bool standingOnPlatform = false) {
         UpdateRaycastOrigins();
         collisions.ResetCollisions();
         collisions.velocityOld = velocity;
@@ -33,6 +33,10 @@ public class Controller2D : RaycastController {
         }
         
         transform.Translate(velocity);
+
+        if (standingOnPlatform) {
+            collisions.below = true;
+        }
     }
 
      void horizontalCollisions(ref Vector3 velocity) {
@@ -47,6 +51,13 @@ public class Controller2D : RaycastController {
             
             if (hit) {
                 
+
+                // This fixes a bug where X movement is messed up while a moving platform vertically squishes a player, but it introduces a bug that allows the player
+                // to move past a horizontally moving platform that is pushing them in the opposite direction that the player is moving
+                if (hit.distance == 0) {
+                    continue;
+                }
+
                 float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
                 
                 if(i == 0 && slopeAngle <= maxClimbAngle) {

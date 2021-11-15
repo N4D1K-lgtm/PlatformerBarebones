@@ -27,9 +27,9 @@ public class Player : MonoBehaviour {
     public float horizontalSpeed = .04f;
 
     public float jumpHeight = 4;
-    public float timeToJumpApex = .4f;
+    public float timeToJumpApex = .225f;
     
-    public float maxVerticalVelocity = 1f;
+    public float maxVerticalVelocity = 20f;
 
     // Calculated from jump apex, height and horizontal movespeed
     private float gravity;

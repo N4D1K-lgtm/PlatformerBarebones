@@ -46,7 +46,7 @@ public class PlatformController : RaycastController {
 
 	float Ease(float x) {
 		float a = easeAmount + 1;
-		return Mathf.Pow(x,a) / (Mathf.Pow(x,a) + Mathf.Pow(1-x,a));
+		return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1-x, a));
 	}
 	
 	Vector3 CalculatePlatformMovement() {
@@ -104,14 +104,14 @@ public class PlatformController : RaycastController {
 			float rayLength = Mathf.Abs (velocity.y) + skinWidth;
 			
 			for (int i = 0; i < verticalRayCount; i ++) {
-				Vector2 rayOrigin = (directionY == -1)?raycastOrigins.bottomLeft:raycastOrigins.topLeft;
+				Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft :raycastOrigins.topLeft;
 				rayOrigin += Vector2.right * (verticalRaySpacing * i);
 				RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, passengerMask);
 
 				if (hit) {
 					if (!movedPassengers.Contains(hit.transform)) {
 						movedPassengers.Add(hit.transform);
-						float pushX = (directionY == 1)?velocity.x:0;
+						float pushX = (directionY == 1) ? velocity.x : 0;
 						float pushY = velocity.y - (hit.distance - skinWidth) * directionY;
 
 						passengerMovement.Add(new PassengerMovement(hit.transform,new Vector3(pushX,pushY), directionY == 1, true));
@@ -125,7 +125,7 @@ public class PlatformController : RaycastController {
 			float rayLength = Mathf.Abs (velocity.x) + skinWidth;
 			
 			for (int i = 0; i < horizontalRayCount; i ++) {
-				Vector2 rayOrigin = (directionX == -1)?raycastOrigins.bottomLeft:raycastOrigins.bottomRight;
+				Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 				rayOrigin += Vector2.up * (horizontalRaySpacing * i);
 				RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, passengerMask);
 

@@ -39,6 +39,7 @@ public class Controller2D : RaycastController {
 
         if (standingOnPlatform) {
             collisions.below = true;
+            
         }
     }
 

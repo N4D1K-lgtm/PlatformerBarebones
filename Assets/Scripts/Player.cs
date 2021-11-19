@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Require Controller2D script on gameobject
 [RequireComponent (typeof (Controller2D))]
 public class Player : MonoBehaviour {   
     
     Controller2D controller;
+
+    private PlayerActionControls playerActionControls;
     
     // Final velocity(really this is the calculated movement not velocity) passed to Move() function in the character controller
     Vector3 velocity;
@@ -20,89 +23,65 @@ public class Player : MonoBehaviour {
 
     // Calculated from jump apex, height and horizontal movespeed
     private float gravity;
-    // To Do: Change jumpforce to depend on horizontal movement and jump height;
-    private float jumpForce => 2 * jumpHeight / timeToJumpApex;
-
-    // Horizontal acceleration time
+    
+    // Horizontal movement variables
     public float accelerationTimeAirborne = .2f;
     public float accelerationTimeGrounded = .1f;
     
-    // Horizontal movement variables
     public float maxHorizontalSpeed = 3f;
     public float horizontalSpeed = .04f;
 
-    public float jumpHeight = 4f;
-    public float timeToJumpApex = .225f;
+    // Jump height and force variables
+    // To Do: Change jumpForce to depend on horizontal movement and jump height;
+    public float maxJumpHeight = 4f;
+    public float minJumpHeight = 3f;
+    public float maxTimeToJumpApex= .225f;
+    public float minTimeToJumpApex= .1112f;
     public float maxVerticalVelocity = 20f;
+
+    float maxJumpForce => 2 * maxJumpHeight / maxTimeToJumpApex;
+    float minJumpForce => 2 * minJumpHeight / minTimeToJumpApex;
 
     public float wallSlideSpeedMax = 7f;
     public float wallStickTime = .25f;
     float timeToWallUnstick;
-    public Vector2 wallJumpClimb;
-    public Vector2 wallJumpOff;
-    public Vector2 wallLeap;
 
-    
-    
-    // Start is called before the first frame update
-    void Start() {
+    public Vector2 wallJumpSmall = new Vector2 (0.03f, 20);
+    public Vector2 wallJumpMed = new Vector2 (0.04f, 20);
+    public Vector2 wallJumpBig = new Vector2 (0.04f, 25);
+
+    private void Awake() {
         // Access 2DController class as controller
-        controller = GetComponent<Controller2D> ();
+        controller = GetComponent<Controller2D>();
+
+        // Initialize Input Action Map
+        playerActionControls = new PlayerActionControls();
+    }    
+
+    void Start() {
+        playerActionControls.Gameplay.Jump.performed += context => OnJump(context);
+        playerActionControls.Gameplay.Jump.canceled += context => OnJump(context);
+    }
+    
+    private void OnEnable() {
+        playerActionControls.Enable();
+    }
+
+    private void OnDisable() {
+        playerActionControls.Disable();
     }
 
     // Update is called once per frame
     void Update() {
-        // Initialize input vector for player movement
-        Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw("Vertical"));
-        int wallDirX = (controller.collisions.left) ? -1 : 1;
         
-        float targetVelocityX = input.x * horizontalSpeed;
+        // Initialize input vector for player movement
+        Vector2 movementInput = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+        int wallDirX = controller.collisions.left ? -1 : 1;
+        float targetVelocityX = movementInput.x * horizontalSpeed;
+        
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne, maxHorizontalSpeed, Time.deltaTime);
         
-        bool wallSliding = false; 
-        if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
-            
-            wallSliding = true;
-            
-            _velocityY = Mathf.Max(_velocityY, -wallSlideSpeedMax);
-            
-            if (timeToWallUnstick > 0) {
-                velocityXSmoothing = 0;
-                velocity.x = 0;
-                
-                if (input.x != wallDirX && input.x != 0) {
-                    timeToWallUnstick -= wallSlideSpeedMax;
-                
-                } else {
-                    timeToWallUnstick = wallStickTime;
-                }
-            } else {
-                timeToWallUnstick = wallStickTime;
-            }
-        }
-
-        // If space is pressed and player is touching ground apply jump velocity
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            if (wallSliding) {
-                if (wallDirX == input.x) {
-                    velocity.x = -wallDirX * wallJumpClimb.x;
-                    _velocityY = wallJumpClimb.y;
-                    Debug.Log("wallClimb");
-                } else if (input.x == 0) {
-                    velocity.x = -wallDirX * wallJumpOff.x;
-                    _velocityY = wallJumpOff.y;
-                    Debug.Log("wallJumpOff");
-                } else {
-                    velocity.x = -wallDirX* wallLeap.x;
-                    _velocityY = wallLeap.y;
-                    Debug.Log("wallLeap");
-                }
-            }
-
-            if (controller.collisions.below) {
-                _velocityY = jumpForce;
-            }
-        }
+        HandleWallSlide(wallDirX, movementInput); 
         
         // Save last calculated _velocity to oldVelocity
         oldVelocityY = _velocityY;
@@ -127,7 +106,7 @@ public class Player : MonoBehaviour {
         } else {
 
             // If in the air apply gravity
-            gravity = -2 * jumpHeight / (timeToJumpApex * timeToJumpApex);
+            gravity = -2 * maxJumpHeight / (maxTimeToJumpApex * maxTimeToJumpApex);
         }
 
         if (controller.collisions.above) {
@@ -135,6 +114,72 @@ public class Player : MonoBehaviour {
             velocity.y = 0;
             // Prevent the previous frames velocity being applied to the player (this is to prevent hang time on the ceiling if a jump is interrupted)
             _velocityY = 0;
+        }
+    }
+
+    public void OnJump(InputAction.CallbackContext context) {
+        
+        if (context.performed) {
+            Vector2 movementInput = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            int wallDirX = (controller.collisions.left) ? -1 : 1;
+            Debug.Log("Jump Performed");
+            if (IsSliding()) {
+                if (wallDirX == movementInput.x) {
+                    velocity.x = -wallDirX * wallJumpSmall.x;
+                    _velocityY = wallJumpSmall.y;
+                    Debug.Log("wallClimb");
+                } else if (movementInput.x == 0) {
+                    velocity.x = -wallDirX * wallJumpMed.x;
+                    _velocityY = wallJumpMed.y;
+                    Debug.Log("wallJumpMed");
+                } else {
+                    velocity.x = -wallDirX* wallJumpBig.x;
+                    _velocityY = wallJumpBig.y;
+                    Debug.Log("wallJumpBig");
+                }
+                timeToWallUnstick = 0;
+            }
+            if(controller.collisions.below) {
+                _velocityY = maxJumpForce;
+            }
+        }
+        
+        if(context.canceled) {
+            Debug.Log(velocity.y);
+            Debug.Log(_velocityY);
+            if (_velocityY > minJumpForce) {
+                _velocityY = minJumpForce;
+            }
+        }   
+    }
+
+
+    private void HandleWallSlide(int wallDirX, Vector2 movementInput) {
+        
+        if (IsSliding()) {
+            _velocityY = Mathf.Max(_velocityY, -wallSlideSpeedMax);
+            
+            if (timeToWallUnstick > 0) {
+                velocityXSmoothing = 0;
+                velocity.x = 0;
+                
+                if (movementInput.x != wallDirX && movementInput.x != 0) {
+                    timeToWallUnstick -= Time.deltaTime;
+                
+                } else {
+                    timeToWallUnstick = wallStickTime;
+                }
+            } else {
+                timeToWallUnstick = wallStickTime;
+            }
+        }
+    }
+    
+    private bool IsSliding() {
+        if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

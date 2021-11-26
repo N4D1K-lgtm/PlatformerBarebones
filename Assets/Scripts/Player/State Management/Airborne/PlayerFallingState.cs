@@ -13,6 +13,8 @@ public class PlayerFallingState : PlayerBaseState
     public override void EnterState()
     {
         Ctx.DebugCurrentState = "Falling";
+        Ctx.ChangeAnimationState("Fall");
+        Ctx.CanWallJump = false;
 
     }
 

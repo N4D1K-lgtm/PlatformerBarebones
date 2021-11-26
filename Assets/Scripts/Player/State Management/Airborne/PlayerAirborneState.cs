@@ -34,11 +34,11 @@ public class PlayerAirborneState : PlayerBaseState
 
         if (Ctx.Controller2D.collisions.above)
         {
-            // If player collides with ceiling, set velocity.y to 0 to stop player movement
-            //Ctx.OldVelocityY = 0;
+            //If player collides with ceiling, set velocity.y to 0 to stop player movement
+            Ctx.OldVelocityY = 0;
             // Prevent the previous frames velocity being applied to the player (this is to prevent hang time on the ceiling if a jump is interrupted)
-            //Ctx.VelocityY = 0;
-            
+            Ctx.VelocityY = 0;
+
         }
 
         // Save last calculated _velocity to oldVelocity
@@ -50,7 +50,17 @@ public class PlayerAirborneState : PlayerBaseState
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 
-        
+        if (Ctx.CurrentMovementX < 0)
+        {
+            Ctx.SpriteRenderer.flipX = true;
+
+
+        }
+        else if (Ctx.CurrentMovementX > 0)
+        {
+            Ctx.SpriteRenderer.flipX = false;
+
+        }
 
     }
 
@@ -66,7 +76,7 @@ public class PlayerAirborneState : PlayerBaseState
         {
             SetSubState(Factory.WallSlide());
         } 
-        else if (Ctx.CurrentMovementY < 0 && !(Ctx.Controller2D.collisions.left || Ctx.Controller2D.collisions.right)) {
+        else if (Ctx.CurrentMovementY < 0 && (!Ctx.Controller2D.collisions.left || !Ctx.Controller2D.collisions.right)) {
             SetSubState(Factory.Falling());
         }
     }
@@ -78,6 +88,9 @@ public class PlayerAirborneState : PlayerBaseState
         if (Ctx.Controller2D.collisions.below)
         {
             SwitchState(Factory.Grounded());
+        } else if (Ctx.IsJumpPressed && (Ctx.Controller2D.collisions.left || Ctx.Controller2D.collisions.right) && !Ctx.RequireJumpPressed && Ctx.CurrentMovementY <= 0)
+        {
+            SwitchState(Factory.Jump());
         }
     }
 }

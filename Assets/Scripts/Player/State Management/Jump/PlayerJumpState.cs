@@ -13,16 +13,46 @@ public class PlayerJumpState : PlayerBaseState
     public override void EnterState()
     {
         // start animation
+        Ctx.ChangeAnimationState("Jump");
 
         // require new jump press to jump again
         Ctx.RequireJumpPressed = true;
 
-        // apply jump velocity
-        Ctx.VelocityY = Ctx.InitialJumpForce;
+        if (!Ctx.CanWallJump)
+        {
+            // apply jump velocity
+            Ctx.VelocityY = Ctx.InitialJumpForce;
+        } else
+        {
+            int _wallDirX = Ctx.Controller2D.collisions.left ? -1 : 1;
+            
+            if (_wallDirX == Ctx.MoveInputVectorX)
+            {
+                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[2].x;
+                Ctx.VelocityY = Ctx.WallJumps[2].y;
+                Debug.Log("wallClimb");
+            }
+            else if (Ctx.MoveInputVectorX == 0)
+            {
+                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[1].x;
+                Ctx.VelocityY = Ctx.WallJumps[1].y;
+                Debug.Log("wallJumpMed");
+            }
+            else
+            {
+                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[0].x;
+                Ctx.VelocityY = Ctx.WallJumps[0].y;
+                Debug.Log("wallJumpBig");
+            }
+            Ctx.TimeToWallUnstick = 0;
+            Ctx.CanWallJump = false;
+        }
+       
 
 
         // set current state string
         Ctx.DebugCurrentState = "Jump";
+
     }
 
     // UpdateState(); is called everyframe inside of the Update(); function of the currentContext (PlayerStateMachine.cs)

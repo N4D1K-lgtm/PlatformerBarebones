@@ -49,16 +49,22 @@ public abstract class PlayerBaseState
         // call the ExitState method of the current state
         ExitState();
 
+        if (_currentSubState != null)
+        {
+            _currentSubState.ExitState();
+        }
+
         // call the EnterState method of the new state
         newState.EnterState();
+
+        if (newState._currentSubState != null)
+        {
+            newState._currentSubState.EnterState();
+        }
 
         // if newState is rootState (top of the hierarchy) switch the current state
         if (_isRootState)
         {
-            if (newState._currentSubState != null)
-            {
-                newState._currentSubState.EnterState();
-            }
             _ctx.CurrentState = newState;
         // else if newState has a superstate, set newState as the active substate of its superstate
         } else if (_currentSuperState != null)

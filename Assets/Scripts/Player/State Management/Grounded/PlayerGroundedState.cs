@@ -31,6 +31,18 @@ public class PlayerGroundedState : PlayerBaseState
         Ctx.OldVelocityY = 0;
         Ctx.VelocityY = 0;
         Ctx.CurrentMovementY = -.05f;
+
+        if (Ctx.CurrentMovementX < 0)
+        {
+            Ctx.SpriteRenderer.flipX = true;
+
+
+        }
+        else if (Ctx.CurrentMovementX > 0)
+        {
+            Ctx.SpriteRenderer.flipX = false;
+
+        }
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called

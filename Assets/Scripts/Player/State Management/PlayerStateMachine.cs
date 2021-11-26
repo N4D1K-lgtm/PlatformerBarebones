@@ -6,11 +6,16 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Controller2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Collider2D))]
 public class PlayerStateMachine : MonoBehaviour
 {
-    private Controller2D _controller;
-    private Animator _animator;
-    private PlayerActionControls _playerActionControls;
+    private Controller2D controller2D;
+    private Collider2D collider2D;
+    private Animator animator;
+    private PlayerActionControls playerActionControls;
+    private SpriteRenderer spriteRenderer;
+    private Transform transform;
 
     public float VelocityXSmoothing;
 
@@ -21,23 +26,22 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField]
     private float _maxHorizontalVelocity = 3f;
     [SerializeField]
-    private float _horizontalSpeed = 0.04f;
+    private float _horizontalSpeed = 0.025f;
     [SerializeField]
     private float _jumpHeight = 0.01f;
     [SerializeField]
-    private float _timeToJumpApex = .225f;
+    private float _timeToJumpApex = .4f;
     [SerializeField]
     private float _maxVerticalVelocity = 20f;
     [SerializeField]
-    private float _maxWallSlideSpeed = 7f;
+    private float _wallSlideSpeed = -.005f;
     [SerializeField]
     private float _wallStickTime = .25f;
 
-    [SerializeField]
-    public readonly Vector2[] WallJumps = { new Vector2(0.03f, 20), new Vector2(0.04f, 20), new Vector2(0.04f, 25) };
+    public readonly Vector2[] WallJumps = { new Vector2(0.05f, 0.01f), new Vector2(0.07f, 0.02f), new Vector2(0.09f, 0.03f) };
 
     // Animation Strings
-    private string[] _animationStates = new string[] { "Idle", "Run", "Attack_1", "Idle_Armed", "Run_Armed", "Dash" };
+    private string[] _animationStates = new string[] { "Idle", "Run", "Attack_1", "Jump", "Fall", "WallSlide" };
     private Dictionary<string, int> _animationStatesDict = new Dictionary<string, int>();
     
     // Jump height and force variables
@@ -47,16 +51,18 @@ public class PlayerStateMachine : MonoBehaviour
     private bool _isRunPressed;
     private bool _isJumpEnabled;
     private bool _requireJumpPressed;
+    private bool _CanWallJump;
     private Vector3 _velocity;
     private Vector3 _oldVelocity;
     private Vector3 _currentMovement;
     private Vector2 _moveInputVector;
     private float _initialJumpForce;
+    private float _timeToWallUnstick;
     private float _gravity;
     private float _timeScale;
     private float _deltaTime;
     private string _debugCurrentState;
-    private int currentAnimationStateHash;
+    private int _currentAnimationStateHash;
 
     // State Variables
     PlayerBaseState _currentState;
@@ -65,10 +71,12 @@ public class PlayerStateMachine : MonoBehaviour
     // Getters and Setters
 
     public PlayerBaseState CurrentState { get { return _currentState; } set { _currentState = value; } }
-    public Animator Animator { get { return _animator; } }
-    public Controller2D Controller2D { get { return _controller; } }
+    public Controller2D Controller2D { get { return controller2D; } }
+    public Transform Transform { get { return transform; } set { transform = value; } }
+    // public Collider2D Collider2D { get { return collider2D; } }
+    public Animator Animator { get { return animator; } }
+    public SpriteRenderer SpriteRenderer { get { return spriteRenderer; } }
     public Dictionary<string, int> AnimationStatesDict { get { return _animationStatesDict; } }
-
     public float VelocityY { get { return _velocity.y; } set { _velocity.y = value; } }
     public float VelocityX { get { return _velocity.x; } set { _velocity.x = value; } }
     public float OldVelocityY { get { return _oldVelocity.y; } set { _oldVelocity.y = value; } }
@@ -80,6 +88,9 @@ public class PlayerStateMachine : MonoBehaviour
     public float MaxVerticalVelocity { get { return _maxVerticalVelocity; } }
     public float MaxHorizontalVelocity { get { return _maxHorizontalVelocity; } }
     public float InitialJumpForce { get { return _initialJumpForce; } }
+    public float WallSlideSpeed { get { return _wallSlideSpeed; } }
+    public float TimeToWallUnstick { get { return _timeToWallUnstick; } set { _timeToWallUnstick = value;} }
+    public float WallStickTime { get { return _wallStickTime; } }
     public float Gravity { get { return _gravity; } }
     public float HorizontalSpeed { get { return _horizontalSpeed; } }
     public float AccelerationTimeGrounded { get { return _accelerationTimeGrounded;} }
@@ -90,14 +101,18 @@ public class PlayerStateMachine : MonoBehaviour
     public bool IsRunPressed { get { return _isRunPressed; } }
     public bool IsJumpPressed { get { return _isJumpPressed; } }
     public bool RequireJumpPressed { get { return _requireJumpPressed; } set { _requireJumpPressed = value; } }
+    public bool CanWallJump { get { return _CanWallJump; } set { _CanWallJump = value; } }
     public string DebugCurrentState { get { return _debugCurrentState; } set { _debugCurrentState = value; } }
 
     void Awake()
     {
         // set initial references
-        _playerActionControls = new PlayerActionControls();
-        _controller = GetComponent<Controller2D>();
-        _animator = GetComponent<Animator>();
+        playerActionControls = new PlayerActionControls();
+        controller2D = GetComponent<Controller2D>();
+        collider2D = GetComponent<Collider2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        transform = GetComponent<Transform>();
 
         // setup state
         _states = new PlayerStateFactory(this);
@@ -106,12 +121,12 @@ public class PlayerStateMachine : MonoBehaviour
 
 
         // initialize input action callbacks
-        _playerActionControls.Gameplay.Jump.performed += context => OnJump(context);
-        _playerActionControls.Gameplay.Jump.canceled += context => OnJump(context);
-        _playerActionControls.Gameplay.Move.performed += context => OnMove(context);
-        _playerActionControls.Gameplay.Move.canceled += context => OnMove(context);
-        _playerActionControls.Gameplay.Run.performed += context => OnRun(context);
-        _playerActionControls.Gameplay.Run.canceled += context => OnRun(context);
+        playerActionControls.Gameplay.Jump.performed += context => OnJump(context);
+        playerActionControls.Gameplay.Jump.canceled += context => OnJump(context);
+        playerActionControls.Gameplay.Move.performed += context => OnMove(context);
+        playerActionControls.Gameplay.Move.canceled += context => OnMove(context);
+        playerActionControls.Gameplay.Run.performed += context => OnRun(context);
+        playerActionControls.Gameplay.Run.canceled += context => OnRun(context);
 
         // misc variables
         _initialJumpForce = 2 * _jumpHeight / _timeToJumpApex;
@@ -141,33 +156,31 @@ public class PlayerStateMachine : MonoBehaviour
 
         _currentState.UpdateStatesLogic();
         _currentState.UpdateStatesPhysics();
-        _controller.Move(_currentMovement);
-        Debug.Log(_currentMovement.x);
-
+        controller2D.Move(_currentMovement);
 
     }
 
     void OnEnable()
     {
-        _playerActionControls.Enable();
+        playerActionControls.Enable();
     }
 
     void OnDisable()
     {
-        _playerActionControls.Disable();
+        playerActionControls.Disable();
     }
 
     public void ChangeAnimationState(string newAnimationState)
     {
         int newAnimationStateHash = _animationStatesDict[newAnimationState];
         
-        if (newAnimationStateHash == currentAnimationStateHash) return;
+        if (newAnimationStateHash == _currentAnimationStateHash) return;
 
-        if (_animator != null)
+        if (animator != null)
         {
-            _animator.Play(newAnimationStateHash);
+            animator.Play(newAnimationStateHash);
         }
-        currentAnimationStateHash = newAnimationStateHash;
+        _currentAnimationStateHash = newAnimationStateHash;
 
     }
 
@@ -192,11 +205,11 @@ public class PlayerStateMachine : MonoBehaviour
         {
             
             _isMovementPressed = true;
-            _moveInputVector = _playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
             
         } else if (context.canceled) {
             _isMovementPressed = false;
-            _moveInputVector = _playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
         }
     }
     

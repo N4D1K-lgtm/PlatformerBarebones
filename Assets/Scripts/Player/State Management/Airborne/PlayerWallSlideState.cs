@@ -9,7 +9,6 @@ public class PlayerWallSlideState : PlayerBaseState
     }
 
     private int _wallDirX;
-
     // this method is called in SwitchState(); of the parent class after the last state's ExitState() function was called
     public override void EnterState()
     {
@@ -19,6 +18,19 @@ public class PlayerWallSlideState : PlayerBaseState
 
         // start playing animation
         Ctx.ChangeAnimationState("WallSlide");
+
+        if (_wallDirX == 1)
+        {
+            // dCtx.SpriteRenderer.flipX = true;
+            //Ctx.Transform.localScale = new Vector3(-1, 1, 1);
+
+        }
+        else if (_wallDirX == -1)
+        {
+            // Ctx.SpriteRenderer.flipX = false;
+            //Ctx.Transform.localScale = new Vector3(1, 1, 1);
+
+        }
 
     }
 
@@ -39,7 +51,7 @@ public class PlayerWallSlideState : PlayerBaseState
         if (Ctx.TimeToWallUnstick > 0)
         {
             Ctx.VelocityXSmoothing = 0;
-            Ctx.CurrentMovementX = 0;
+            Ctx.CurrentMovementX = -0.0001f * _wallDirX;
 
             if (Ctx.MoveInputVectorX != _wallDirX && Ctx.MoveInputVectorX != 0)
             {
@@ -56,18 +68,6 @@ public class PlayerWallSlideState : PlayerBaseState
             Ctx.TimeToWallUnstick = Ctx.WallStickTime;
         }
 
-        if (_wallDirX == 1)
-        {
-            Ctx.SpriteRenderer.flipX = true;
-            //Ctx.Transform.localRotation = Quaternion.Euler(180, 0, 0);
-
-        }
-        else if (_wallDirX == -1)
-        {
-            Ctx.SpriteRenderer.flipX = false;
-            //Ctx.Transform.localRotation = Quaternion.Euler(0, 0, 0);
-
-        }
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called

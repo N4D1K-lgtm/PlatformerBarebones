@@ -12,7 +12,6 @@ public class PlayerIdleState : PlayerBaseState
     {
         // Set Idle Animation
         
-        Debug.Log("attempted to change to idle");
         Ctx.ChangeAnimationState("Idle");
         Ctx.DebugCurrentState = "Idle";
 
@@ -34,8 +33,6 @@ public class PlayerIdleState : PlayerBaseState
     public override void UpdateStatePhysics()
     {
         _targetVelocityX = Ctx.MoveInputVectorX * Ctx.HorizontalSpeed;
-
-        Debug.Log(_targetVelocityX);
         Ctx.CurrentMovementX = Mathf.SmoothDamp(Ctx.CurrentMovementX, _targetVelocityX, ref Ctx.VelocityXSmoothing, Ctx.AccelerationTimeGrounded, Ctx.MaxHorizontalVelocity, Ctx.DeltaTime);
     }
 

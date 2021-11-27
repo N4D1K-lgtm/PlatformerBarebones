@@ -9,7 +9,6 @@ public class PlayerRunState : PlayerBaseState
     // this method is called in SwitchState(); of the parent class after the last state's ExitState() function was called
     public override void EnterState()
     {
-        Debug.Log("run state");
         Ctx.ChangeAnimationState("Run");
     }
 

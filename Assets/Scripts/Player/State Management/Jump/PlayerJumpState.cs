@@ -21,7 +21,7 @@ public class PlayerJumpState : PlayerBaseState
         if (!Ctx.CanWallJump)
         {
             // apply jump velocity
-            Ctx.VelocityY = Ctx.InitialJumpForce;
+            Ctx.VelocityY = Ctx.InitialJumpVelocity;
         } else
         {
             int _wallDirX = Ctx.Controller2D.collisions.left ? -1 : 1;
@@ -71,11 +71,11 @@ public class PlayerJumpState : PlayerBaseState
         Ctx.CurrentMovementX = Mathf.SmoothDamp(Ctx.CurrentMovementX, _targetPosX, ref Ctx.VelocityXSmoothing, Ctx.AccelerationTimeAirborne, Ctx.MaxHorizontalVelocity, Ctx.DeltaTime);
 
         // Save last calculated _velocity to oldVelocity
-        Ctx.OldVelocityY = Ctx.VelocityY;
+        //Ctx.OldVelocityY = Ctx.VelocityY;
+        // Apply average of OldVelocityY and new VelocityY * Timestep
+        Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
         // Calculate new _velocityY from gravity and timestep
         Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);        
-        // Apply average of OldVelocityY and new VelocityY * Timestep
-        Ctx.CurrentMovementY = (Ctx.OldVelocityY + Ctx.VelocityY) * .5f;
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 

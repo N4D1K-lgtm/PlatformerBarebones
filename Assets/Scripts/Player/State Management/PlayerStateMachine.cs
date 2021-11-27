@@ -56,7 +56,7 @@ public class PlayerStateMachine : MonoBehaviour
     private Vector3 _oldVelocity;
     private Vector3 _currentMovement;
     private Vector2 _moveInputVector;
-    private float _initialJumpForce;
+    private float _initialJumpVelocity;
     private float _timeToWallUnstick;
     private float _gravity;
     private float _timeScale;
@@ -87,7 +87,7 @@ public class PlayerStateMachine : MonoBehaviour
     public float MoveInputVectorX { get { return _moveInputVector.x; } set { _moveInputVector.x = value; } } 
     public float MaxVerticalVelocity { get { return _maxVerticalVelocity; } }
     public float MaxHorizontalVelocity { get { return _maxHorizontalVelocity; } }
-    public float InitialJumpForce { get { return _initialJumpForce; } }
+    public float InitialJumpVelocity { get { return _initialJumpVelocity; } }
     public float WallSlideSpeed { get { return _wallSlideSpeed; } }
     public float TimeToWallUnstick { get { return _timeToWallUnstick; } set { _timeToWallUnstick = value;} }
     public float WallStickTime { get { return _wallStickTime; } }
@@ -129,8 +129,10 @@ public class PlayerStateMachine : MonoBehaviour
         playerActionControls.Gameplay.Run.canceled += context => OnRun(context);
 
         // misc variables
-        _initialJumpForce = 2 * _jumpHeight / _timeToJumpApex;
-        _gravity = -2 * _jumpHeight / (_timeToJumpApex * _timeToJumpApex);
+        float v_x = 100;
+        float x_h = 1;
+        _initialJumpVelocity = 20*(2 * _jumpHeight * v_x) / x_h;
+        _gravity = (-2 * _jumpHeight * v_x * v_x) / (x_h * x_h);
         _timeScale = 1;
 
         for (int i = 0; i <_animationStates.Length; i++)
@@ -152,8 +154,6 @@ public class PlayerStateMachine : MonoBehaviour
     void Update()
     {
         _deltaTime = Time.deltaTime * _timeScale;
-
-
         _currentState.UpdateStatesLogic();
         _currentState.UpdateStatesPhysics();
         controller2D.Move(_currentMovement);

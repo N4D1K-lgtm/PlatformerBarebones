@@ -42,25 +42,25 @@ public class PlayerAirborneState : PlayerBaseState
         }
 
         // Save last calculated _velocity to oldVelocity
-        Ctx.OldVelocityY = Ctx.VelocityY;
-        // Calculate new _velocityY from gravity and timestep
-        Ctx.VelocityY += Ctx.Gravity * Ctx.DeltaTime;
+        //Ctx.OldVelocityY = Ctx.VelocityY;
         // Apply average of OldVelocityY and new VelocityY * Timestep
-        Ctx.CurrentMovementY = (Ctx.OldVelocityY + Ctx.VelocityY) * .5f;
+        Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
+        // Calculate new _velocityY from gravity and timestep
+        Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 
-        if (Ctx.CurrentMovementX < 0)
+        /*if (Ctx.CurrentMovementX < 0)
         {
-            Ctx.SpriteRenderer.flipX = true;
+            Ctx.Transform.localScale = new Vector3(-1, 1, 1);
 
 
         }
         else if (Ctx.CurrentMovementX > 0)
         {
-            Ctx.SpriteRenderer.flipX = false;
+            Ctx.Transform.localScale = new Vector3(1, 1, 1);
 
-        }
+        }*/
 
     }
 

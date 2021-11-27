@@ -12,8 +12,10 @@ public class PlayerGroundedState : PlayerBaseState
     // this method is called in SwitchState(); of the parent class after the last state's ExitState() function was called
     public override void EnterState()
     {
-        
+
         // Set animation
+
+        Ctx.CanWallJump = false;
 
     }
 
@@ -34,13 +36,13 @@ public class PlayerGroundedState : PlayerBaseState
 
         if (Ctx.CurrentMovementX < 0)
         {
-            Ctx.SpriteRenderer.flipX = true;
+            //Ctx.Transform.localScale = new Vector3(-1, 1, 1);
 
 
         }
         else if (Ctx.CurrentMovementX > 0)
         {
-            Ctx.SpriteRenderer.flipX = false;
+            //Ctx.Transform.localScale = new Vector3(1, 1, 1);
 
         }
     }

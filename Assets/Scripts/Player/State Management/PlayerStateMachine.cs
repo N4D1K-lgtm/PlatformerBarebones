@@ -43,7 +43,7 @@ public class PlayerStateMachine : MonoBehaviour
     // Animation Strings
     private string[] _animationStates = new string[] { "Idle", "Run", "Attack_1", "Jump", "Fall", "WallSlide" };
     private Dictionary<string, int> _animationStatesDict = new Dictionary<string, int>();
-    
+
     // Jump height and force variables
     // To Do: Change jumpForce to depend on horizontal movement and jump height;
     private bool _isJumpPressed;
@@ -83,8 +83,8 @@ public class PlayerStateMachine : MonoBehaviour
     public float OldVelocityX { get { return _oldVelocity.x; } set { _oldVelocity.x = value; } }
     public float CurrentMovementY { get { return _currentMovement.y; } set { _currentMovement.y = value; } }
     public float CurrentMovementX { get { return _currentMovement.x; } set { _currentMovement.x = value; } }
-    public float MoveInputVectorY { get { return _moveInputVector.y; } set { _moveInputVector.y = value; } } 
-    public float MoveInputVectorX { get { return _moveInputVector.x; } set { _moveInputVector.x = value; } } 
+    public float MoveInputVectorY { get { return _moveInputVector.y; } set { _moveInputVector.y = value; } }
+    public float MoveInputVectorX { get { return _moveInputVector.x; } set { _moveInputVector.x = value; } }
     public float MaxVerticalVelocity { get { return _maxVerticalVelocity; } }
     public float MaxHorizontalVelocity { get { return _maxHorizontalVelocity; } }
     public float InitialJumpVelocity { get { return _initialJumpVelocity; } }
@@ -129,10 +129,11 @@ public class PlayerStateMachine : MonoBehaviour
         playerActionControls.Gameplay.Run.canceled += context => OnRun(context);
 
         // misc variables
-        float v_x = 100;
-        float x_h = 1;
-        _initialJumpVelocity = 20*(2 * _jumpHeight * v_x) / x_h;
-        _gravity = (-2 * _jumpHeight * v_x * v_x) / (x_h * x_h);
+        float jumpHeight = 2.5f;
+        float v_x = 1f;
+        float x_h = .25f;
+        _initialJumpVelocity = (2f * jumpHeight * v_x) / x_h;
+        _gravity = (-2f * jumpHeight * v_x * v_x) / (x_h * x_h);
         _timeScale = 1;
 
         for (int i = 0; i <_animationStates.Length; i++)
@@ -173,7 +174,7 @@ public class PlayerStateMachine : MonoBehaviour
     public void ChangeAnimationState(string newAnimationState)
     {
         int newAnimationStateHash = _animationStatesDict[newAnimationState];
-        
+
         if (newAnimationStateHash == _currentAnimationStateHash) return;
 
         if (animator != null)
@@ -196,23 +197,23 @@ public class PlayerStateMachine : MonoBehaviour
             _isJumpPressed = false;
             _requireJumpPressed = false;
         }
-        
+
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            
+
             _isMovementPressed = true;
             _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
-            
+
         } else if (context.canceled) {
             _isMovementPressed = false;
             _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
         }
     }
-    
+
     public void OnRun(InputAction.CallbackContext context)
     {
         _isRunPressed = context.ReadValueAsButton();

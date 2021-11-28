@@ -3,7 +3,7 @@ public class PlayerJumpState : PlayerBaseState
 {
     // create a public constructor method with currentContext of type PlayerStateMachine, factory of type PlayerStateFactory
     // and pass this to the base state constructor
-    public PlayerJumpState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory) { 
+    public PlayerJumpState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory) {
     IsRootState = true;
     }
 
@@ -25,7 +25,7 @@ public class PlayerJumpState : PlayerBaseState
         } else
         {
             int _wallDirX = Ctx.Controller2D.collisions.left ? -1 : 1;
-            
+
             if (_wallDirX == Ctx.MoveInputVectorX)
             {
                 Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[2].x;
@@ -47,7 +47,7 @@ public class PlayerJumpState : PlayerBaseState
             Ctx.TimeToWallUnstick = 0;
             Ctx.CanWallJump = false;
         }
-       
+
 
 
         // set current state string
@@ -75,7 +75,7 @@ public class PlayerJumpState : PlayerBaseState
         // Apply average of OldVelocityY and new VelocityY * Timestep
         Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
         // Calculate new _velocityY from gravity and timestep
-        Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);        
+        Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 
@@ -99,9 +99,9 @@ public class PlayerJumpState : PlayerBaseState
         {
             SwitchState(Factory.Grounded());
         }
-        else if (Ctx.CurrentMovementY <= 0 || Ctx.Controller2D.collisions.above) 
+        else if (Ctx.CurrentMovementY <= 0 || Ctx.Controller2D.collisions.above)
         {
             SwitchState(Factory.Airborne());
-        } 
+        }
     }
 }

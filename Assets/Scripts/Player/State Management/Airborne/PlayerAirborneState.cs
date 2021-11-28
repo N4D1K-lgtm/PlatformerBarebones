@@ -8,7 +8,7 @@ public class PlayerAirborneState : PlayerBaseState
     {
         IsRootState = true;
         InitializeSubState();
-        
+
     }
 
     // this method is called in SwitchState(); of the parent class after the last state's ExitState() function was called
@@ -22,7 +22,7 @@ public class PlayerAirborneState : PlayerBaseState
         // Check to see if the current state should switch
         CheckSwitchStates();
 
-        
+
     }
 
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
@@ -75,12 +75,12 @@ public class PlayerAirborneState : PlayerBaseState
         if (Ctx.CurrentMovementY <= 0 && (Ctx.Controller2D.collisions.left || Ctx.Controller2D.collisions.left))
         {
             SetSubState(Factory.WallSlide());
-        } 
+        }
         else if (Ctx.CurrentMovementY < 0 && (!Ctx.Controller2D.collisions.left || !Ctx.Controller2D.collisions.right)) {
             SetSubState(Factory.Falling());
         }
     }
-   
+
     // called in the current state's UpdateState() method
     public override void CheckSwitchStates()
     {

@@ -38,10 +38,10 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField]
     private float _wallStickTime = .25f;
 
-    public readonly Vector2[] WallJumps = { new Vector2(0.05f, 0.01f), new Vector2(0.07f, 0.02f), new Vector2(0.09f, 0.03f) };
+    public readonly Vector2[] WallJumps = { new Vector2(0.03f, 10f), new Vector2(0.035f, 13.5f), new Vector2(0.04f, 17f) };
 
     // Animation Strings
-    private string[] _animationStates = new string[] { "Idle", "Run", "Attack_1", "Jump", "Fall", "WallSlide" };
+    private string[] _animationStates = new string[] { "Idle", "Run", "Attack_1", "Jump", "Fall", "WallSlide_Right", "WallSlide_Left" };
     private Dictionary<string, int> _animationStatesDict = new Dictionary<string, int>();
 
     // Jump height and force variables
@@ -63,6 +63,11 @@ public class PlayerStateMachine : MonoBehaviour
     private float _deltaTime;
     private string _debugCurrentState;
     private int _currentAnimationStateHash;
+
+    // Nates Variables
+    float jumpHeight;
+    float v_x;
+    float x_h;
 
     // State Variables
     PlayerBaseState _currentState;
@@ -129,9 +134,9 @@ public class PlayerStateMachine : MonoBehaviour
         playerActionControls.Gameplay.Run.canceled += context => OnRun(context);
 
         // misc variables
-        float jumpHeight = 2.5f;
-        float v_x = 1f;
-        float x_h = .25f;
+        jumpHeight = 2.5f;
+        v_x = 1f;
+        x_h = .25f;
         _initialJumpVelocity = (2f * jumpHeight * v_x) / x_h;
         _gravity = (-2f * jumpHeight * v_x * v_x) / (x_h * x_h);
         _timeScale = 1;

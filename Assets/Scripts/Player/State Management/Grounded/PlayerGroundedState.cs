@@ -36,13 +36,13 @@ public class PlayerGroundedState : PlayerBaseState
 
         if (Ctx.CurrentMovementX < 0)
         {
-            //Ctx.Transform.localScale = new Vector3(-1, 1, 1);
+            Ctx.SpriteRenderer.flipX = true ;
 
 
         }
         else if (Ctx.CurrentMovementX > 0)
         {
-            //Ctx.Transform.localScale = new Vector3(1, 1, 1);
+            Ctx.SpriteRenderer.flipX = false;
 
         }
     }

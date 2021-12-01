@@ -15,6 +15,9 @@ public class PlayerJumpState : PlayerBaseState
         // start animation
         Ctx.ChangeAnimationState("Jump");
 
+        // set current state string
+        Ctx.DebugCurrentState = "Jump";
+
         // require new jump press to jump again
         Ctx.RequireJumpPressed = true;
 
@@ -28,9 +31,9 @@ public class PlayerJumpState : PlayerBaseState
 
             if (_wallDirX == Ctx.MoveInputVectorX)
             {
-                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[2].x;
-                Ctx.VelocityY = Ctx.WallJumps[2].y;
-                Debug.Log("wallClimb");
+                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[0].x;
+                Ctx.VelocityY = Ctx.WallJumps[0].y;
+                Debug.Log("wallJumpSmall");
             }
             else if (Ctx.MoveInputVectorX == 0)
             {
@@ -40,18 +43,13 @@ public class PlayerJumpState : PlayerBaseState
             }
             else
             {
-                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[0].x;
-                Ctx.VelocityY = Ctx.WallJumps[0].y;
+                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[2].x;
+                Ctx.VelocityY = Ctx.WallJumps[2].y;
                 Debug.Log("wallJumpBig");
             }
             Ctx.TimeToWallUnstick = 0;
             Ctx.CanWallJump = false;
         }
-
-
-
-        // set current state string
-        Ctx.DebugCurrentState = "Jump";
 
     }
 

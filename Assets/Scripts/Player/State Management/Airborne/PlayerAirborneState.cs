@@ -50,17 +50,17 @@ public class PlayerAirborneState : PlayerBaseState
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 
-        /*if (Ctx.CurrentMovementX < 0)
+        if (Ctx.CurrentMovementX < 0)
         {
-            Ctx.Transform.localScale = new Vector3(-1, 1, 1);
+            Ctx.SpriteRenderer.flipX = true;
 
 
         }
         else if (Ctx.CurrentMovementX > 0)
         {
-            Ctx.Transform.localScale = new Vector3(1, 1, 1);
+            Ctx.SpriteRenderer.flipX = false;
 
-        }*/
+        }
 
     }
 
@@ -88,7 +88,7 @@ public class PlayerAirborneState : PlayerBaseState
         if (Ctx.Controller2D.collisions.below)
         {
             SwitchState(Factory.Grounded());
-        } else if (Ctx.IsJumpPressed && (Ctx.Controller2D.collisions.left || Ctx.Controller2D.collisions.right) && !Ctx.RequireJumpPressed && Ctx.CurrentMovementY <= 0)
+        } else if (Ctx.IsJumpPressed && Ctx.CanWallJump == true && !Ctx.RequireJumpPressed)
         {
             SwitchState(Factory.Jump());
         }

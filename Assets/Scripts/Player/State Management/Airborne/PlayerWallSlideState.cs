@@ -9,34 +9,40 @@ public class PlayerWallSlideState : PlayerBaseState
     }
 
     private int _wallDirX;
+    // private bool _isFlipped;
+
     // this method is called in SwitchState(); of the parent class after the last state's ExitState() function was called
     public override void EnterState()
     {
+        
+        
         Ctx.DebugCurrentState = "WallSlide";
-
+        // _isFlipped = Ctx.SpriteRenderer.flipX;
+        Ctx.SpriteRenderer.flipX = false;
         _wallDirX = Ctx.Controller2D.collisions.left ? -1 : 1;
 
-        // start playing animation
-        Ctx.ChangeAnimationState("WallSlide");
 
+
+        // start playing animation
         if (_wallDirX == 1)
         {
-            // dCtx.SpriteRenderer.flipX = true;
-            //Ctx.Transform.localScale = new Vector3(-1, 1, 1);
+            Ctx.ChangeAnimationState("WallSlide_Right");
 
         }
         else if (_wallDirX == -1)
         {
-            // Ctx.SpriteRenderer.flipX = false;
-            //Ctx.Transform.localScale = new Vector3(1, 1, 1);
+            Ctx.ChangeAnimationState("WallSlide_Left");
 
         }
 
+        Ctx.CanWallJump = true;
     }
 
     // UpdateState(); is called everyframe inside of the Update(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStateLogic()
     {
+
+       
         // Check to see if the current state should switch
         CheckSwitchStates();
 
@@ -45,13 +51,14 @@ public class PlayerWallSlideState : PlayerBaseState
 
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
-    {
+    {   
+        // asdas
         Ctx.CurrentMovementY = Ctx.WallSlideSpeed;
         Debug.Log(Ctx.CurrentMovementY);
         if (Ctx.TimeToWallUnstick > 0)
         {
             Ctx.VelocityXSmoothing = 0;
-            Ctx.CurrentMovementX = -0.0001f * _wallDirX;
+            Ctx.CurrentMovementX = 0;
 
             if (Ctx.MoveInputVectorX != _wallDirX && Ctx.MoveInputVectorX != 0)
             {
@@ -68,6 +75,8 @@ public class PlayerWallSlideState : PlayerBaseState
             Ctx.TimeToWallUnstick = Ctx.WallStickTime;
         }
 
+        Ctx.SpriteRenderer.flipX = false;
+
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called
@@ -75,7 +84,18 @@ public class PlayerWallSlideState : PlayerBaseState
     {
         Ctx.VelocityY = 0;
         Ctx.OldVelocityY = 0;
-        Ctx.CanWallJump = true;
+        
+
+        if (_wallDirX == 1)
+        {
+            Ctx.SpriteRenderer.flipX = true;
+
+        }
+        else if (_wallDirX == -1)
+        {
+            Ctx.SpriteRenderer.flipX = false;
+
+        }
     }
 
     public override void InitializeSubState()

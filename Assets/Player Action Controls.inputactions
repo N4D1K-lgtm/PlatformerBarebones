@@ -22,7 +22,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Run",
+                    "name": "RollDash",
                     "type": "Button",
                     "id": "4cfb3c27-bdc4-43e6-a621-be5cf1c2f876",
                     "expectedControlType": "Button",
@@ -247,7 +247,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Run",
+                    "action": "RollDash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -258,7 +258,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Xbox",
-                    "action": "Run",
+                    "action": "RollDash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -269,7 +269,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Switch Pro Controller",
-                    "action": "Run",
+                    "action": "RollDash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

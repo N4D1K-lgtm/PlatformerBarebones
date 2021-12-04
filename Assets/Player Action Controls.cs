@@ -35,7 +35,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Run"",
+                    ""name"": ""RollDash"",
                     ""type"": ""Button"",
                     ""id"": ""4cfb3c27-bdc4-43e6-a621-be5cf1c2f876"",
                     ""expectedControlType"": ""Button"",
@@ -260,7 +260,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""Run"",
+                    ""action"": ""RollDash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -271,7 +271,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Xbox"",
-                    ""action"": ""Run"",
+                    ""action"": ""RollDash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -282,7 +282,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Switch Pro Controller"",
-                    ""action"": ""Run"",
+                    ""action"": ""RollDash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -367,7 +367,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
-        m_Gameplay_Run = m_Gameplay.FindAction("Run", throwIfNotFound: true);
+        m_Gameplay_RollDash = m_Gameplay.FindAction("RollDash", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Newaction = m_UI.FindAction("New action", throwIfNotFound: true);
@@ -422,14 +422,14 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
     private IGameplayActions m_GameplayActionsCallbackInterface;
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_Move;
-    private readonly InputAction m_Gameplay_Run;
+    private readonly InputAction m_Gameplay_RollDash;
     public struct GameplayActions
     {
         private @PlayerActionControls m_Wrapper;
         public GameplayActions(@PlayerActionControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
-        public InputAction @Run => m_Wrapper.m_Gameplay_Run;
+        public InputAction @RollDash => m_Wrapper.m_Gameplay_RollDash;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -445,9 +445,9 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                 @Move.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
-                @Run.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRun;
-                @Run.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRun;
-                @Run.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRun;
+                @RollDash.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRollDash;
+                @RollDash.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRollDash;
+                @RollDash.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRollDash;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -458,9 +458,9 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
-                @Run.started += instance.OnRun;
-                @Run.performed += instance.OnRun;
-                @Run.canceled += instance.OnRun;
+                @RollDash.started += instance.OnRollDash;
+                @RollDash.performed += instance.OnRollDash;
+                @RollDash.canceled += instance.OnRollDash;
             }
         }
     }
@@ -538,7 +538,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
     {
         void OnJump(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
-        void OnRun(InputAction.CallbackContext context);
+        void OnRollDash(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

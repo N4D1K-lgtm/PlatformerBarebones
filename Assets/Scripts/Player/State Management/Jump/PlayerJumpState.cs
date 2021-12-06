@@ -31,19 +31,19 @@ public class PlayerJumpState : PlayerBaseState
 
             if (_wallDirX == Ctx.MoveInputVectorX)
             {
-                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[0].x;
+                Ctx.VelocityX = -_wallDirX * Ctx.WallJumps[0].x;
                 Ctx.VelocityY = Ctx.WallJumps[0].y;
                 
             }
             else if (Ctx.MoveInputVectorX == 0)
             {
-                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[1].x;
+                Ctx.VelocityX = -_wallDirX * Ctx.WallJumps[1].x;
                 Ctx.VelocityY = Ctx.WallJumps[1].y;
                 
             }
             else
             {
-                Ctx.CurrentMovementX = -_wallDirX * Ctx.WallJumps[2].x;
+                Ctx.VelocityX = -_wallDirX * Ctx.WallJumps[2].x;
                 Ctx.VelocityY = Ctx.WallJumps[2].y;
                 
             }
@@ -64,7 +64,7 @@ public class PlayerJumpState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        if (Ctx.MoveInputVectorX > 0f)
+        /*if (Ctx.MoveInputVectorX > 0f)
         {
             if (!Ctx.LastDirection)
             {
@@ -101,13 +101,18 @@ public class PlayerJumpState : PlayerBaseState
                 Ctx.AccumulatedVelocityX -= 0.01f;
                 Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
             }
-        }
+        }*/
 
         Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
+        Ctx.CurrentMovementX = Ctx.VelocityX * Ctx.DeltaTime + .5f * Ctx.DeltaTime * Ctx.DeltaTime;
+
         // Calculate new _velocityY from gravity and timestep
         Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);
-        // Clamp vertical velocity in between +/- of maxVerticalVelocity;
+        Ctx.VelocityX += (Ctx.Acceleration * Ctx.DeltaTime);
+
+        // Clamp velocity in between +/- of maxVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
+        Ctx.CurrentMovementX = Mathf.Clamp(Ctx.CurrentMovementX, -Ctx.MaxHorizontalVelocity, Ctx.MaxHorizontalVelocity);
 
     }
 

@@ -16,6 +16,8 @@ public class PlayerWalkState : PlayerBaseState
         Ctx.ChangeAnimationState("Run");
 
         Ctx.DebugCurrentState = "Walk";
+        Ctx.TargetDirection = 1;
+
 
     }
 
@@ -37,8 +39,8 @@ public class PlayerWalkState : PlayerBaseState
                 Ctx.AccumulatedVelocityX = 0;
                 Ctx.LastDirection = true;
             }
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, 0.025f);
-            Ctx.AccumulatedVelocityX += 0.01f;
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 1.2f, 15f) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, .1f);
 
             Debug.Log(Ctx.CurrentMovementX);
         } else if (Ctx.MoveInputVectorX < 0f )
@@ -49,8 +51,8 @@ public class PlayerWalkState : PlayerBaseState
                 Ctx.LastDirection = false ;
             }
 
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, -0.025f);
-            Ctx.AccumulatedVelocityX += 0.01f;
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 1.2f, -15f) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, .1f);
         }
         
     }

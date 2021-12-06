@@ -91,7 +91,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                 {
                     ""name"": ""WASD"",
                     ""id"": ""71bf8675-37d2-4c47-acca-cd4913be8a0f"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -100,30 +100,8 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""up"",
+                    ""name"": ""Negative"",
                     ""id"": ""416c371a-7626-4321-9182-606b1b522ff0"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""c77ce1f9-11b9-4873-a4bc-07214a8f2e77"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""d14eb497-e72b-44d3-89ae-d2abbbb0a647"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -133,8 +111,8 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""right"",
-                    ""id"": ""f3557de0-3e55-4b0d-b7a7-b48dbd60db7a"",
+                    ""name"": ""Positive"",
+                    ""id"": ""c77ce1f9-11b9-4873-a4bc-07214a8f2e77"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -146,7 +124,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                 {
                     ""name"": ""L1 (Xbox)"",
                     ""id"": ""4582a55a-ef2d-44d5-bd14-3a4756e1aaf6"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -155,30 +133,8 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""up"",
+                    ""name"": ""Negative"",
                     ""id"": ""17c591e7-1b98-438e-9811-5f2978514275"",
-                    ""path"": ""<XInputController>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Xbox"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""c5841b54-38a1-40b1-91a6-75683cee1809"",
-                    ""path"": ""<XInputController>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Xbox"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""9fced6db-21ed-4d9d-a199-03b8bab192b3"",
                     ""path"": ""<XInputController>/leftStick/left"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -188,8 +144,8 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""right"",
-                    ""id"": ""38622658-374a-4e7e-88d9-e270c5f9f04b"",
+                    ""name"": ""Positive"",
+                    ""id"": ""c5841b54-38a1-40b1-91a6-75683cee1809"",
                     ""path"": ""<XInputController>/leftStick/right"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -201,7 +157,7 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                 {
                     ""name"": ""L1 (Switch)"",
                     ""id"": ""ff548847-3b05-4edf-bb80-e76147e8ad1f"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -210,30 +166,8 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""up"",
+                    ""name"": ""Negative"",
                     ""id"": ""75687ae4-45d2-4faf-9367-0f62df0fbe09"",
-                    ""path"": ""<SwitchProControllerHID>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Switch Pro Controller"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""30f183fb-9ac7-448e-9106-4f5d5d21dd3b"",
-                    ""path"": ""<SwitchProControllerHID>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Switch Pro Controller"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""680315d2-0680-4c93-affe-1a859d748737"",
                     ""path"": ""<SwitchProControllerHID>/leftStick/left"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -243,8 +177,8 @@ public class @PlayerActionControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""right"",
-                    ""id"": ""7a2afde6-e45a-467d-b109-736a16ef7399"",
+                    ""name"": ""Positive"",
+                    ""id"": ""30f183fb-9ac7-448e-9106-4f5d5d21dd3b"",
                     ""path"": ""<SwitchProControllerHID>/leftStick/right"",
                     ""interactions"": """",
                     ""processors"": """",

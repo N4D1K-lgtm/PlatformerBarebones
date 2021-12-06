@@ -24,8 +24,6 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField]
     private float _accelerationTimeGrounded = .1f;
     [SerializeField]
-    private float _maxHorizontalVelocity = 3f;
-    [SerializeField]
     private float _horizontalSpeed = 0.025f;
     [SerializeField]
     private float _jumpHeight = 0.01f;
@@ -33,6 +31,8 @@ public class PlayerStateMachine : MonoBehaviour
     private float _timeToJumpApex = .4f;
     [SerializeField]
     private float _maxVerticalVelocity = 20f;
+    [SerializeField]
+    private float _maxHorizontalVelocity = 3f;
     [SerializeField]
     private float _wallSlideSpeed = -.005f;
     [SerializeField]
@@ -68,7 +68,8 @@ public class PlayerStateMachine : MonoBehaviour
     private bool _lastDirection;
     private Vector3 _velocity;
     private Vector3 _currentMovement;
-    private Vector2 _moveInputVector;
+    private float _moveInputX;
+    private float _targetDirection;
     private float _initialJumpVelocity;
     private float _accumulatedVelocityX;
     private float _timeToWallUnstick;
@@ -101,8 +102,8 @@ public class PlayerStateMachine : MonoBehaviour
     public float VelocityX { get { return _velocity.x; } set { _velocity.x = value; } }
     public float CurrentMovementY { get { return _currentMovement.y; } set { _currentMovement.y = value; } }
     public float CurrentMovementX { get { return _currentMovement.x; } set { _currentMovement.x = value; } }
-    public float MoveInputVectorY { get { return _moveInputVector.y; } set { _moveInputVector.y = value; } }
-    public float MoveInputVectorX { get { return _moveInputVector.x; } set { _moveInputVector.x = value; } }
+    // Move input vector is now actually just a float for a 1d axis but im too lazy to change all the references in everyother script atm
+    public float MoveInputVectorX { get { return _moveInputX; } set { _moveInputX = value; } }
     public float MaxVerticalVelocity { get { return _maxVerticalVelocity; } }
     public float MaxHorizontalVelocity { get { return _maxHorizontalVelocity; } }
     public float InitialJumpVelocity { get { return _initialJumpVelocity; } }
@@ -112,6 +113,7 @@ public class PlayerStateMachine : MonoBehaviour
     public float Gravity { get { return _gravity; } }
     public float HorizontalSpeed { get { return _horizontalSpeed; } }
     public float AccumulatedVelocityX { get { return _accumulatedVelocityX; } set { _accumulatedVelocityX = value; } }
+    public float TargetDirection { get { return _targetDirection; } set { _targetDirection = value; } }
     public float AccelerationTimeGrounded { get { return _accelerationTimeGrounded;} }
     public float AccelerationTimeAirborne { get { return _accelerationTimeAirborne;} }
     public float DashTime { get { return _dashTime; } }
@@ -121,7 +123,9 @@ public class PlayerStateMachine : MonoBehaviour
     public float RollFrameTime { get { return _rollFrameTime; } }
     public float TimeScale { get { return _timeScale; } set { _timeScale = value; } }
     public float DeltaTime { get { return _deltaTime; } }
-    
+
+    public float Acceleration;
+
     public bool IsMovementPressed { get { return _isMovementPressed; } }
     public bool IsRollDashPressed { get { return _isRollDashPressed; } }
     public bool IsRollFinished { get { return _isRollFinished; } set { _isRollFinished = value; } }
@@ -272,11 +276,11 @@ public class PlayerStateMachine : MonoBehaviour
         {
 
             _isMovementPressed = true;
-            _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            _moveInputX = playerActionControls.Gameplay.Move.ReadValue<float>();
 
         } else if (context.canceled) {
             _isMovementPressed = false;
-            _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            _moveInputX = playerActionControls.Gameplay.Move.ReadValue<float>();
         }
     }
 

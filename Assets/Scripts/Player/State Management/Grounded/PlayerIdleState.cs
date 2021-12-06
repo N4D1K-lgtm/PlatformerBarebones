@@ -16,6 +16,7 @@ public class PlayerIdleState : PlayerBaseState
         Ctx.DebugCurrentState = "Idle";
 
         Ctx.AccumulatedVelocityX -= 0.01f;
+        Ctx.TargetDirection = 0;
 
     }
 
@@ -34,21 +35,24 @@ public class PlayerIdleState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        
+
         if (Ctx.LastDirection)
         {
-            
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, 0.025f);
-            Ctx.AccumulatedVelocityX -= 0.01f;
-        } else if (!Ctx.LastDirection)
+
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 1.2f, 15f) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, .1f);
+        }
+        else if (!Ctx.LastDirection)
         {
-            
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, -0.025f);
-            Ctx.AccumulatedVelocityX -= 0.01f;
+
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 1.2f, -15f) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, .1f);
         }
 
-        Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0); 
-        
+        Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
+
+
+
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called

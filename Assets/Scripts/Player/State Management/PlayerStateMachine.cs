@@ -17,22 +17,20 @@ public class PlayerStateMachine : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Transform transform;
 
-    public float VelocityXSmoothing;
-
     [SerializeField]
-    private float _accelerationTimeAirborne = .2f;
+    private float _accelerationAirborne = 10f;
     [SerializeField]
-    private float _accelerationTimeGrounded = .1f;
-    [SerializeField]
-    private float _horizontalSpeed = 0.025f;
-    [SerializeField]
-    private float _jumpHeight = 0.01f;
-    [SerializeField]
-    private float _timeToJumpApex = .4f;
+    private float _accelerationGrounded = 10f;
     [SerializeField]
     private float _maxVerticalVelocity = 20f;
     [SerializeField]
     private float _maxHorizontalVelocity = 3f;
+    [SerializeField]
+    private float _accelerationStep = .1f;
+    [SerializeField]
+    private float _jumpHeight = 0.01f;
+    [SerializeField]
+    private float _timeToJumpApex = .4f;
     [SerializeField]
     private float _wallSlideSpeed = -.005f;
     [SerializeField]
@@ -111,11 +109,11 @@ public class PlayerStateMachine : MonoBehaviour
     public float TimeToWallUnstick { get { return _timeToWallUnstick; } set { _timeToWallUnstick = value;} }
     public float WallStickTime { get { return _wallStickTime; } }
     public float Gravity { get { return _gravity; } }
-    public float HorizontalSpeed { get { return _horizontalSpeed; } }
+    public float AccelerationStep { get { return _accelerationStep; } }
     public float AccumulatedVelocityX { get { return _accumulatedVelocityX; } set { _accumulatedVelocityX = value; } }
     public float TargetDirection { get { return _targetDirection; } set { _targetDirection = value; } }
-    public float AccelerationTimeGrounded { get { return _accelerationTimeGrounded;} }
-    public float AccelerationTimeAirborne { get { return _accelerationTimeAirborne;} }
+    public float AccelerationGrounded { get { return _accelerationGrounded;} }
+    public float AccelerationAirborne { get { return _accelerationAirborne;} }
     public float DashTime { get { return _dashTime; } }
     public float RollTime { get { return _rollTime; } }
     public float DashSpeed { get { return _dashSpeed; } }
@@ -123,9 +121,6 @@ public class PlayerStateMachine : MonoBehaviour
     public float RollFrameTime { get { return _rollFrameTime; } }
     public float TimeScale { get { return _timeScale; } set { _timeScale = value; } }
     public float DeltaTime { get { return _deltaTime; } }
-
-    public float Acceleration;
-
     public bool IsMovementPressed { get { return _isMovementPressed; } }
     public bool IsRollDashPressed { get { return _isRollDashPressed; } }
     public bool IsRollFinished { get { return _isRollFinished; } set { _isRollFinished = value; } }

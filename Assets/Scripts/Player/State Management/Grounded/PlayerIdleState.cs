@@ -15,7 +15,6 @@ public class PlayerIdleState : PlayerBaseState
         Ctx.ChangeAnimationState("Idle");
         Ctx.DebugCurrentState = "Idle";
 
-        Ctx.AccumulatedVelocityX -= 0.01f;
         Ctx.TargetDirection = 0;
 
     }
@@ -39,14 +38,14 @@ public class PlayerIdleState : PlayerBaseState
         if (Ctx.LastDirection)
         {
 
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 1.2f, 15f) * Ctx.DeltaTime;
-            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, .1f);
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
         }
         else if (!Ctx.LastDirection)
         {
 
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 1.2f, -15f) * Ctx.DeltaTime;
-            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, .1f);
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
         }
 
         Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);

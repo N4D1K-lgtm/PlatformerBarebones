@@ -57,7 +57,7 @@ public class PlayerWallSlideState : PlayerBaseState
 
         if (Ctx.TimeToWallUnstick > 0)
         {
-            Ctx.VelocityXSmoothing = 0;
+         
             Ctx.CurrentMovementX = 0;
 
             if (Ctx.MoveInputVectorX != _wallDirX && Ctx.MoveInputVectorX != 0)

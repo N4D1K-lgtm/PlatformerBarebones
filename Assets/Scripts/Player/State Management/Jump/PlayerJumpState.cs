@@ -104,15 +104,15 @@ public class PlayerJumpState : PlayerBaseState
         }*/
 
         Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
-        Ctx.CurrentMovementX = Ctx.VelocityX * Ctx.DeltaTime + .5f * Ctx.DeltaTime * Ctx.DeltaTime;
+        //Ctx.CurrentMovementX = Ctx.VelocityX * Ctx.DeltaTime + .5f * Ctx.DeltaTime * Ctx.DeltaTime;
 
         // Calculate new _velocityY from gravity and timestep
         Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);
-        Ctx.VelocityX += (Ctx.Acceleration * Ctx.DeltaTime);
+        //Ctx.VelocityX += (Ctx.Acceleration * Ctx.DeltaTime);
 
         // Clamp velocity in between +/- of maxVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
-        Ctx.CurrentMovementX = Mathf.Clamp(Ctx.CurrentMovementX, -Ctx.MaxHorizontalVelocity, Ctx.MaxHorizontalVelocity);
+        //Ctx.CurrentMovementX = Mathf.Clamp(Ctx.CurrentMovementX, -Ctx.MaxHorizontalVelocity, Ctx.MaxHorizontalVelocity);
 
     }
 

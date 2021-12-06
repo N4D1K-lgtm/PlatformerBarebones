@@ -64,17 +64,17 @@ public class PlayerJumpState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        /*if (Ctx.MoveInputVectorX > 0f)
+        if (Ctx.MoveInputVectorX > 0f)
         {
             if (!Ctx.LastDirection)
             {
                 Ctx.AccumulatedVelocityX = 0;
                 Ctx.LastDirection = true;
             }
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, 0.025f);
-            Ctx.AccumulatedVelocityX += 0.01f;
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
 
-            Debug.Log(Ctx.CurrentMovementX);
+            
         }
         else if (Ctx.MoveInputVectorX < 0f)
         {
@@ -84,24 +84,24 @@ public class PlayerJumpState : PlayerBaseState
                 Ctx.LastDirection = false;
             }
 
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, -0.025f);
-            Ctx.AccumulatedVelocityX += 0.01f;
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
         }
         else if (Ctx.MoveInputVectorX == 0)
         {
             if (Ctx.LastDirection)
             {
-                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, 0.025f);
-                Ctx.AccumulatedVelocityX -= 0.01f;
+                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+                Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
                 Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
             }
             else if (!Ctx.LastDirection)
             {
-                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, -0.025f);
-                Ctx.AccumulatedVelocityX -= 0.01f;
+                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+                Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
                 Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
             }
-        }*/
+        }
 
         Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
         //Ctx.CurrentMovementX = Ctx.VelocityX * Ctx.DeltaTime + .5f * Ctx.DeltaTime * Ctx.DeltaTime;
@@ -112,7 +112,7 @@ public class PlayerJumpState : PlayerBaseState
 
         // Clamp velocity in between +/- of maxVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
-        //Ctx.CurrentMovementX = Mathf.Clamp(Ctx.CurrentMovementX, -Ctx.MaxHorizontalVelocity, Ctx.MaxHorizontalVelocity);
+        //Ctx.CurrentMovementX = Mathf.Clamp(Ctx.CurrentMovementX, -Ctx.AccelerationAirborne, Ctx.AccelerationAirborne);
 
     }
 

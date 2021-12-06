@@ -35,10 +35,10 @@ public class PlayerAirborneState : PlayerBaseState
                 Ctx.AccumulatedVelocityX = 0;
                 Ctx.LastDirection = true;
             }
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, 0.025f);
-            Ctx.AccumulatedVelocityX += 0.01f;
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
 
-            Debug.Log(Ctx.CurrentMovementX);
+
         }
         else if (Ctx.MoveInputVectorX < 0f)
         {
@@ -48,20 +48,21 @@ public class PlayerAirborneState : PlayerBaseState
                 Ctx.LastDirection = false;
             }
 
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, -0.025f);
-            Ctx.AccumulatedVelocityX += 0.01f;
-        } else if (Ctx.MoveInputVectorX == 0)
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
+        }
+        else if (Ctx.MoveInputVectorX == 0)
         {
             if (Ctx.LastDirection)
             {
-                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, 0.025f);
-                Ctx.AccumulatedVelocityX -= 0.01f;
+                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+                Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
                 Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
             }
             else if (!Ctx.LastDirection)
             {
-                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, 10f, -0.025f);
-                Ctx.AccumulatedVelocityX -= 0.01f;
+                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+                Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
                 Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
             }
         }

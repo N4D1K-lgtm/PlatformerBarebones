@@ -1,9 +1,6 @@
 using UnityEngine;
 public class PlayerWalkState : PlayerBaseState
 {
-    private float _targetVelocityX;
-    
-    float _accumulatedVelocityX;
     
     // create a public constructor method with currentContext of type PlayerStateMachine, factory of type PlayerStateFactory
     // and pass this to the base state constructor
@@ -32,29 +29,15 @@ public class PlayerWalkState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics() {
 
-        if (Ctx.MoveInputVectorX > 0f) 
-        {   
-            if (!Ctx.LastDirection)
-            {
-                Ctx.AccumulatedVelocityX = 0;
-                Ctx.LastDirection = true;
-            }
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
-
-            Debug.Log(Ctx.CurrentMovementX);
-        } else if (Ctx.MoveInputVectorX < 0f )
+        if (Ctx.MoveInputVectorX > 0) 
         {
-            if (Ctx.LastDirection)
-            {
-                Ctx.AccumulatedVelocityX = 0;
-                Ctx.LastDirection = false ;
-            }
-
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
+            Ctx.TargetDirection = 8f; 
+        } else if (Ctx.MoveInputVectorX < 0 )
+        {
+            Ctx.TargetDirection = -8f;
         }
-        
+        Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+        Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called

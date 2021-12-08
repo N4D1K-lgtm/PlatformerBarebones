@@ -240,10 +240,19 @@ public class PlayerStateMachine : MonoBehaviour
     }
 
     public float CalculateHorizontalMovement (float value, float acceleration, float maxspeed)
-    {   
-        // f(x) = y(1 - a^-x)
+    {
+        // f(x) = z(1 - a^-x)
+        float result = 0;
+        
+        if (value >= 0)
+        {
+            result = maxspeed * (1 - Mathf.Pow(acceleration, -value));
+        } else if (value < 0)
+        {
+            result = -maxspeed * (1 - Mathf.Pow(acceleration, value));
+        }  
 
-        float result = maxspeed * (1 - Mathf.Pow(acceleration, -value));
+        
       
        
         return result;

@@ -36,7 +36,7 @@ public class PlayerAirborneState : PlayerBaseState
                 Ctx.LastDirection = true;
             }
             Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
+           
 
 
         }
@@ -49,23 +49,15 @@ public class PlayerAirborneState : PlayerBaseState
             }
 
             Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-            Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
+            
         }
         else if (Ctx.MoveInputVectorX == 0)
         {
-            if (Ctx.LastDirection)
-            {
-                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-                Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
-                Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
-            }
-            else if (!Ctx.LastDirection)
-            {
-                Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-                Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
-                Ctx.AccumulatedVelocityX = Mathf.Max(Ctx.AccumulatedVelocityX, 0);
-            }
+            Ctx.TargetDirection = 0;
+        
         }
+        
+        Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
 
         if (Ctx.Controller2D.collisions.above)
         {
@@ -81,13 +73,13 @@ public class PlayerAirborneState : PlayerBaseState
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 
-        if (Ctx.CurrentMovementX < 0)
+        if (Ctx.MoveInputVectorX < 0)
         {
             Ctx.SpriteRenderer.flipX = true;
 
 
         }
-        else if (Ctx.CurrentMovementX > 0)
+        else if (Ctx.MoveInputVectorX > 0)
         {
             Ctx.SpriteRenderer.flipX = false;
 

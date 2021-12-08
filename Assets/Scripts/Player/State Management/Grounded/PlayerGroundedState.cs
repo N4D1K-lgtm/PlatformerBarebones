@@ -31,13 +31,13 @@ public class PlayerGroundedState : PlayerBaseState
         Ctx.VelocityY = 0;
         Ctx.CurrentMovementY = -.05f;
 
-        if (Ctx.CurrentMovementX < 0)
+        if (Ctx.MoveInputVectorX < 0)
         {
             Ctx.SpriteRenderer.flipX = true ;
 
 
         }
-        else if (Ctx.CurrentMovementX > 0)
+        else if (Ctx.MoveInputVectorX > 0)
         {
             Ctx.SpriteRenderer.flipX = false;
 

@@ -1,7 +1,6 @@
 using UnityEngine;
 public class PlayerWalkState : PlayerBaseState
 {
-    private float _targetVelocityX;
     
     // create a public constructor method with currentContext of type PlayerStateMachine, factory of type PlayerStateFactory
     // and pass this to the base state constructor
@@ -14,6 +13,8 @@ public class PlayerWalkState : PlayerBaseState
         Ctx.ChangeAnimationState("Run");
 
         Ctx.DebugCurrentState = "Walk";
+        Ctx.TargetDirection = 10;
+
 
     }
 
@@ -23,16 +24,20 @@ public class PlayerWalkState : PlayerBaseState
         // Check to see if the current state should switch
         CheckSwitchStates();
 
-        // set current state string
     }
 
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics() {
 
-        _targetVelocityX = Ctx.MoveInputVectorX * Ctx.HorizontalSpeed;
-
-        Ctx.CurrentMovementX = Mathf.SmoothDamp(Ctx.CurrentMovementX, _targetVelocityX, ref Ctx.VelocityXSmoothing, Ctx.AccelerationTimeGrounded, Ctx.MaxHorizontalVelocity, Ctx.DeltaTime);
-
+        if (Ctx.MoveInputVectorX > 0) 
+        {
+            Ctx.TargetDirection = 8f; 
+        } else if (Ctx.MoveInputVectorX < 0 )
+        {
+            Ctx.TargetDirection = -8f;
+        }
+        Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+        Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called
@@ -48,13 +53,12 @@ public class PlayerWalkState : PlayerBaseState
 
     // called in the current state's UpdateState() method
     public override void CheckSwitchStates() {
-        // if movement is not pressed, switch to idle
+
+        
         if (!Ctx.IsMovementPressed)
         {
             SwitchState(Factory.Idle());
         // else if movement is still pressed and run is pressed, switch to run
-        } else if (Ctx.IsMovementPressed && Ctx.IsRunPressed) {
-            SwitchState(Factory.Run());
         }
     }
 }

@@ -17,47 +17,63 @@ public class PlayerStateMachine : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Transform transform;
 
-    public float VelocityXSmoothing;
-
     [SerializeField]
-    private float _accelerationTimeAirborne = .2f;
+    private float _accelerationAirborne = 10f;
     [SerializeField]
-    private float _accelerationTimeGrounded = .1f;
+    private float _accelerationGrounded = 10f;
+    [SerializeField]
+    private float _maxVerticalVelocity = 20f;
     [SerializeField]
     private float _maxHorizontalVelocity = 3f;
     [SerializeField]
-    private float _horizontalSpeed = 0.025f;
+    private float _accelerationStep = .1f;
     [SerializeField]
     private float _jumpHeight = 0.01f;
     [SerializeField]
     private float _timeToJumpApex = .4f;
     [SerializeField]
-    private float _maxVerticalVelocity = 20f;
-    [SerializeField]
     private float _wallSlideSpeed = -.005f;
     [SerializeField]
     private float _wallStickTime = .25f;
+    [SerializeField]
+    private float _dashTime = .25f;
+    [SerializeField]
+    private float _dashDistance = .25f;
+    [SerializeField]
+    private float _rollTime = .5f;
+    [SerializeField]
+    private float _rollDistance = .01f;
 
     public readonly Vector2[] WallJumps = { new Vector2(0.03f, 10f), new Vector2(0.035f, 13.5f), new Vector2(0.04f, 17f) };
 
     // Animation Strings
-    private string[] _animationStates = new string[] { "Idle", "Run", "Attack_1", "Jump", "Fall", "WallSlide_Right", "WallSlide_Left" };
+    private string[] _animationStates = new string[] { "Idle", "Run", "Jump", "Fall", "Roll", "Dash", "Wall_Grab", "Wall_Slide_Right", "Wall_Slide_Left", "Attack_1", "Attack_2", "Attack_3", "Special_Attack", };
     private Dictionary<string, int> _animationStatesDict = new Dictionary<string, int>();
 
+   
     // Jump height and force variables
     // To Do: Change jumpForce to depend on horizontal movement and jump height;
     private bool _isJumpPressed;
     private bool _isMovementPressed;
-    private bool _isRunPressed;
+    private bool _isRollDashPressed;
+    private bool _isDashFinished;
+    private bool _isRollFinished;
     private bool _isJumpEnabled;
     private bool _requireJumpPressed;
-    private bool _CanWallJump;
+    private bool _requireRollDashPressed;
+    private bool _canWallJump;
+    private bool _canDash;
+    private bool _lastDirection;
     private Vector3 _velocity;
-    private Vector3 _oldVelocity;
     private Vector3 _currentMovement;
-    private Vector2 _moveInputVector;
+    private float _moveInputX;
+    private float _targetDirection;
     private float _initialJumpVelocity;
+    private float _accumulatedVelocityX;
     private float _timeToWallUnstick;
+    private float _rollSpeed;
+    private float _rollFrameTime;
+    private float _dashSpeed;
     private float _gravity;
     private float _timeScale;
     private float _deltaTime;
@@ -74,22 +90,18 @@ public class PlayerStateMachine : MonoBehaviour
     PlayerStateFactory _states;
 
     // Getters and Setters
-
     public PlayerBaseState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public Controller2D Controller2D { get { return controller2D; } }
     public Transform Transform { get { return transform; } set { transform = value; } }
-    // public Collider2D Collider2D { get { return collider2D; } }
     public Animator Animator { get { return animator; } }
     public SpriteRenderer SpriteRenderer { get { return spriteRenderer; } }
-    public Dictionary<string, int> AnimationStatesDict { get { return _animationStatesDict; } }
+    
     public float VelocityY { get { return _velocity.y; } set { _velocity.y = value; } }
     public float VelocityX { get { return _velocity.x; } set { _velocity.x = value; } }
-    public float OldVelocityY { get { return _oldVelocity.y; } set { _oldVelocity.y = value; } }
-    public float OldVelocityX { get { return _oldVelocity.x; } set { _oldVelocity.x = value; } }
     public float CurrentMovementY { get { return _currentMovement.y; } set { _currentMovement.y = value; } }
     public float CurrentMovementX { get { return _currentMovement.x; } set { _currentMovement.x = value; } }
-    public float MoveInputVectorY { get { return _moveInputVector.y; } set { _moveInputVector.y = value; } }
-    public float MoveInputVectorX { get { return _moveInputVector.x; } set { _moveInputVector.x = value; } }
+    // Move input vector is now actually just a float for a 1d axis but im too lazy to change all the references in everyother script atm
+    public float MoveInputVectorX { get { return _moveInputX; } set { _moveInputX = value; } }
     public float MaxVerticalVelocity { get { return _maxVerticalVelocity; } }
     public float MaxHorizontalVelocity { get { return _maxHorizontalVelocity; } }
     public float InitialJumpVelocity { get { return _initialJumpVelocity; } }
@@ -97,17 +109,33 @@ public class PlayerStateMachine : MonoBehaviour
     public float TimeToWallUnstick { get { return _timeToWallUnstick; } set { _timeToWallUnstick = value;} }
     public float WallStickTime { get { return _wallStickTime; } }
     public float Gravity { get { return _gravity; } }
-    public float HorizontalSpeed { get { return _horizontalSpeed; } }
-    public float AccelerationTimeGrounded { get { return _accelerationTimeGrounded;} }
-    public float AccelerationTimeAirborne { get { return _accelerationTimeAirborne;} }
+    public float AccelerationStep { get { return _accelerationStep; } }
+    public float AccumulatedVelocityX { get { return _accumulatedVelocityX; } set { _accumulatedVelocityX = value; } }
+    public float TargetDirection { get { return _targetDirection; } set { _targetDirection = value; } }
+    public float AccelerationGrounded { get { return _accelerationGrounded;} }
+    public float AccelerationAirborne { get { return _accelerationAirborne;} }
+    public float DashTime { get { return _dashTime; } }
+    public float RollTime { get { return _rollTime; } }
+    public float DashSpeed { get { return _dashSpeed; } }
+    public float RollSpeed { get { return _rollSpeed; } }
+    public float RollFrameTime { get { return _rollFrameTime; } }
     public float TimeScale { get { return _timeScale; } set { _timeScale = value; } }
     public float DeltaTime { get { return _deltaTime; } }
     public bool IsMovementPressed { get { return _isMovementPressed; } }
-    public bool IsRunPressed { get { return _isRunPressed; } }
+    public bool IsRollDashPressed { get { return _isRollDashPressed; } }
+    public bool IsRollFinished { get { return _isRollFinished; } set { _isRollFinished = value; } }
+    public bool IsDashFinished { get { return _isDashFinished; } set { _isDashFinished = value; } }
     public bool IsJumpPressed { get { return _isJumpPressed; } }
     public bool RequireJumpPressed { get { return _requireJumpPressed; } set { _requireJumpPressed = value; } }
-    public bool CanWallJump { get { return _CanWallJump; } set { _CanWallJump = value; } }
+    public bool RequireRollDashPressed { get { return _requireRollDashPressed; } set { _requireRollDashPressed = value; } }
+    public bool CanWallJump { get { return _canWallJump; } set { _canWallJump = value; } }
+    public bool CanDash { get { return _canDash; } set { _canDash = value; } }
+    public bool LastDirection { get { return _lastDirection; } set { _lastDirection = value; } }
+    
     public string DebugCurrentState { get { return _debugCurrentState; } set { _debugCurrentState = value; } }
+    
+    public Dictionary<string, int> AnimationStatesDict { get { return _animationStatesDict; } }
+
 
     void Awake()
     {
@@ -130,17 +158,26 @@ public class PlayerStateMachine : MonoBehaviour
         playerActionControls.Gameplay.Jump.canceled += context => OnJump(context);
         playerActionControls.Gameplay.Move.performed += context => OnMove(context);
         playerActionControls.Gameplay.Move.canceled += context => OnMove(context);
-        playerActionControls.Gameplay.Run.performed += context => OnRun(context);
-        playerActionControls.Gameplay.Run.canceled += context => OnRun(context);
+        playerActionControls.Gameplay.RollDash.performed += context => OnRollDash(context);
+        playerActionControls.Gameplay.RollDash.canceled += context => OnRollDash(context);
 
         // misc variables
-        jumpHeight = 2.5f;
+        _jumpHeight = 2.5f;
         v_x = 1f;
         x_h = .25f;
-        _initialJumpVelocity = (2f * jumpHeight * v_x) / x_h;
-        _gravity = (-2f * jumpHeight * v_x * v_x) / (x_h * x_h);
+        _initialJumpVelocity = (2f * _jumpHeight * v_x) / x_h;
+        _gravity = (-2f * _jumpHeight * v_x * v_x) / (x_h * x_h);
         _timeScale = 1;
 
+
+        _dashSpeed = _dashDistance / _dashTime;
+        _rollSpeed = _rollDistance / _rollTime;
+
+        // there are 20 animation frames for the roll
+        _rollFrameTime = 20 / (_rollTime * 60);
+
+        // true = right,  false = left
+        _lastDirection = true;
         for (int i = 0; i <_animationStates.Length; i++)
         {
             int hash = Animator.StringToHash("Base Layer." + _animationStates[i]);
@@ -150,10 +187,10 @@ public class PlayerStateMachine : MonoBehaviour
 
     void Start()
     {
-        /*for (int i = 0; i < _animationStates.Length; i++)
+        for (int i = 0; i < _animationStates.Length; i++)
         {
             Debug.Log(_animationStatesDict[_animationStates[i]] + _animationStates[i]);
-        }*/
+        }
     }
 
     // Update() is called once per frame
@@ -190,6 +227,38 @@ public class PlayerStateMachine : MonoBehaviour
 
     }
 
+
+    public IEnumerator WaitCoroutine(float waitTime, System.Action<bool> callback)
+    {
+        //yield on a new YieldInstruction that waits for x seconds.
+        yield return new WaitForSeconds(waitTime);
+
+        //After we have waited x seconds set _finished to true
+        bool isFinished = true;
+
+        if (callback != null) callback(isFinished);
+    }
+
+    public float CalculateHorizontalMovement (float value, float acceleration, float maxspeed)
+    {
+        // f(x) = z(1 - a^-x)
+        float result = 0;
+        
+        if (value >= 0)
+        {
+            result = maxspeed * (1 - Mathf.Pow(acceleration, -value));
+        } else if (value < 0)
+        {
+            result = -maxspeed * (1 - Mathf.Pow(acceleration, value));
+        }  
+
+        
+      
+       
+        return result;
+    }
+
+
     // response methods to input actions
     public void OnJump(InputAction.CallbackContext context)
     {
@@ -211,17 +280,22 @@ public class PlayerStateMachine : MonoBehaviour
         {
 
             _isMovementPressed = true;
-            _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            _moveInputX = playerActionControls.Gameplay.Move.ReadValue<float>();
 
         } else if (context.canceled) {
             _isMovementPressed = false;
-            _moveInputVector = playerActionControls.Gameplay.Move.ReadValue<Vector2>();
+            _moveInputX = playerActionControls.Gameplay.Move.ReadValue<float>();
         }
     }
 
-    public void OnRun(InputAction.CallbackContext context)
+    public void OnRollDash(InputAction.CallbackContext context)
     {
-        _isRunPressed = context.ReadValueAsButton();
+        if (context.performed)
+        {
+            _isRollDashPressed = true;
+        } else if (context.canceled) {
+            _isRollDashPressed = false;
+            _requireRollDashPressed = false;
+        }
     }
-
 }

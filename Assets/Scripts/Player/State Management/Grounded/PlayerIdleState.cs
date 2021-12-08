@@ -5,7 +5,7 @@ public class PlayerIdleState : PlayerBaseState
     // and pass this to the base state constructor
     public PlayerIdleState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory) { }
 
-    private float _targetVelocityX;
+    
     
     // this method is called in SwitchState(); of the parent class after the last state's ExitState() function was called
     public override void EnterState()
@@ -14,6 +14,8 @@ public class PlayerIdleState : PlayerBaseState
         
         Ctx.ChangeAnimationState("Idle");
         Ctx.DebugCurrentState = "Idle";
+
+        Ctx.TargetDirection = 0;
 
     }
 
@@ -32,8 +34,8 @@ public class PlayerIdleState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        _targetVelocityX = Ctx.MoveInputVectorX * Ctx.HorizontalSpeed;
-        Ctx.CurrentMovementX = Mathf.SmoothDamp(Ctx.CurrentMovementX, _targetVelocityX, ref Ctx.VelocityXSmoothing, Ctx.AccelerationTimeGrounded, Ctx.MaxHorizontalVelocity, Ctx.DeltaTime);
+        Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+        Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
     }
 
     // this method is called in SwitchState(); of the parent class before the next state's EnterState() function is called
@@ -49,16 +51,11 @@ public class PlayerIdleState : PlayerBaseState
 
     // called in the current state's UpdateState() method
     public override void CheckSwitchStates()
-    {
-        // if player is moving and run is pressed, switch to run state
-        if (Ctx.IsMovementPressed && Ctx.IsRunPressed)
-        {
-            SwitchState(Factory.Run());
-        }
-        // else if movement is pressed, switch to walk state
-        else if (Ctx.IsMovementPressed)
-        {
-            SwitchState(Factory.Walk());
-        }
+    { 
+        // if movement is pressed, switch to walk state
+        if (Ctx.IsMovementPressed)
+            {
+                SwitchState(Factory.Walk());
+            }
     }
 }

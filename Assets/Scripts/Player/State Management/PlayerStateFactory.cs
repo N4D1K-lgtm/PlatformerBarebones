@@ -20,9 +20,9 @@ public class PlayerStateFactory
         return new PlayerWalkState(_context, this);
     }
 
-    public PlayerBaseState Run()
+    public PlayerBaseState Roll()
     {
-        return new PlayerRunState(_context, this);
+        return new PlayerRollState(_context, this);
     }
 
     public PlayerBaseState Grounded()
@@ -45,8 +45,15 @@ public class PlayerStateFactory
         return new PlayerWallSlideState(_context, this);
     }
 
+    public PlayerBaseState Dash()
+    {
+        return new PlayerDashState(_context, this);
+    }
+
     public PlayerBaseState Airborne()
     {
         return new PlayerAirborneState(_context, this);
     }
+
+    
 }

@@ -13,10 +13,8 @@ public class PlayerGroundedState : PlayerBaseState
     public override void EnterState()
     {
 
-        // Set animation
-
         Ctx.CanWallJump = false;
-
+        Ctx.CanDash = true;
     }
 
     // UpdateState(); is called everyframe inside of the Update(); function of the currentContext (PlayerStateMachine.cs)
@@ -30,17 +28,16 @@ public class PlayerGroundedState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        Ctx.OldVelocityY = 0;
         Ctx.VelocityY = 0;
         Ctx.CurrentMovementY = -.05f;
 
-        if (Ctx.CurrentMovementX < 0)
+        if (Ctx.MoveInputVectorX < 0)
         {
             Ctx.SpriteRenderer.flipX = true ;
 
 
         }
-        else if (Ctx.CurrentMovementX > 0)
+        else if (Ctx.MoveInputVectorX > 0)
         {
             Ctx.SpriteRenderer.flipX = false;
 
@@ -55,28 +52,33 @@ public class PlayerGroundedState : PlayerBaseState
 
     public override void InitializeSubState()
     {
-        if (!Ctx.IsMovementPressed && !Ctx.IsRunPressed)
-        {
-            SetSubState(Factory.Idle());
-        } else if (Ctx.IsMovementPressed && !Ctx.IsRunPressed)
-        {
-            SetSubState(Factory.Walk());
-        } else if (Ctx.IsMovementPressed && Ctx.IsRunPressed)
-        {
-            SetSubState(Factory.Run());
-        }
+        if (Ctx.IsMovementPressed)
+            {
+                SetSubState(Factory.Walk());
+            }
+        else if (!Ctx.IsMovementPressed)
+            {
+                SetSubState(Factory.Idle());
+            } 
     }
     
     // called in the current state's UpdateState() method
     public override void CheckSwitchStates()
     {
+        // if player is not grounded switch to airborne state
+        if (!Ctx.Controller2D.collisions.below)
+            {
+                SwitchState(Factory.Airborne());
+            } 
         // if player is grounded and jump is pressed, switch to jump state
-        if (Ctx.IsJumpPressed && !Ctx.RequireJumpPressed)
-        {
-            SwitchState(Factory.Jump());
-        } else if (!Ctx.Controller2D.collisions.below)
-        {
-            SwitchState(Factory.Airborne());
-        }
+        else if (Ctx.IsJumpPressed && !Ctx.RequireJumpPressed)
+            {
+                SwitchState(Factory.Jump());
+            }
+        // if player is grounded and roll is pressed switch to roll
+        else if (Ctx.IsRollDashPressed && !Ctx.RequireRollDashPressed)
+            {
+                SwitchState(Factory.Roll());
+            }
     }
 }

@@ -28,35 +28,58 @@ public class PlayerAirborneState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        _targetPosX = Ctx.MoveInputVectorX * Ctx.HorizontalSpeed;
+        if (Ctx.MoveInputVectorX > 0f)
+        {
+            if (!Ctx.LastDirection)
+            {
+                Ctx.AccumulatedVelocityX = 0;
+                Ctx.LastDirection = true;
+            }
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+           
 
-        Ctx.CurrentMovementX = Mathf.SmoothDamp(Ctx.CurrentMovementX, _targetPosX, ref Ctx.VelocityXSmoothing, Ctx.AccelerationTimeAirborne, Ctx.MaxHorizontalVelocity, Ctx.DeltaTime);
+
+        }
+        else if (Ctx.MoveInputVectorX < 0f)
+        {
+            if (Ctx.LastDirection)
+            {
+                Ctx.AccumulatedVelocityX = 0;
+                Ctx.LastDirection = false;
+            }
+
+            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
+            
+        }
+        else if (Ctx.MoveInputVectorX == 0)
+        {
+            Ctx.TargetDirection = 0;
+        
+        }
+        
+        Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
 
         if (Ctx.Controller2D.collisions.above)
         {
             //If player collides with ceiling, set velocity.y to 0 to stop player movement
-            Ctx.OldVelocityY = 0;
-            // Prevent the previous frames velocity being applied to the player (this is to prevent hang time on the ceiling if a jump is interrupted)
             Ctx.VelocityY = 0;
 
         }
 
-        // Save last calculated _velocity to oldVelocity
-        //Ctx.OldVelocityY = Ctx.VelocityY;
-        // Apply average of OldVelocityY and new VelocityY * Timestep
+       
         Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
         // Calculate new _velocityY from gravity and timestep
         Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);
         // Clamp vertical velocity in between +/- of maxVerticalVelocity;
         Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
 
-        if (Ctx.CurrentMovementX < 0)
+        if (Ctx.MoveInputVectorX < 0)
         {
             Ctx.SpriteRenderer.flipX = true;
 
 
         }
-        else if (Ctx.CurrentMovementX > 0)
+        else if (Ctx.MoveInputVectorX > 0)
         {
             Ctx.SpriteRenderer.flipX = false;
 
@@ -88,9 +111,12 @@ public class PlayerAirborneState : PlayerBaseState
         if (Ctx.Controller2D.collisions.below)
         {
             SwitchState(Factory.Grounded());
-        } else if (Ctx.IsJumpPressed && Ctx.CanWallJump == true && !Ctx.RequireJumpPressed)
+        } else if (Ctx.IsJumpPressed && Ctx.CanWallJump && !Ctx.RequireJumpPressed)
         {
             SwitchState(Factory.Jump());
+        } else if (Ctx.IsRollDashPressed && Ctx.CanDash && !Ctx.RequireRollDashPressed)
+        {
+            SwitchState(Factory.Dash());
         }
     }
 }

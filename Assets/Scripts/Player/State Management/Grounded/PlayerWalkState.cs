@@ -13,7 +13,7 @@ public class PlayerWalkState : PlayerBaseState
         Ctx.ChangeAnimationState("Run");
 
         Ctx.DebugCurrentState = "Walk";
-        Ctx.TargetDirection = 10;
+        Ctx.TargetDirection = 5;
 
 
     }
@@ -31,10 +31,10 @@ public class PlayerWalkState : PlayerBaseState
 
         if (Ctx.MoveInputVectorX > 0) 
         {
-            Ctx.TargetDirection = 8f; 
+            Ctx.TargetDirection = 3f; 
         } else if (Ctx.MoveInputVectorX < 0 )
         {
-            Ctx.TargetDirection = -8f;
+            Ctx.TargetDirection = -3f;
         }
         Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
         Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);

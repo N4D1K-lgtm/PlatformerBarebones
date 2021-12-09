@@ -28,36 +28,25 @@ public class PlayerAirborneState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        if (Ctx.MoveInputVectorX > 0f)
+        if (Ctx.MoveInputVectorX > 0)
         {
-            if (!Ctx.LastDirection)
-            {
-                Ctx.AccumulatedVelocityX = 0;
-                Ctx.LastDirection = true;
-            }
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-           
-
-
+            Ctx.TargetDirection = 3f;
         }
-        else if (Ctx.MoveInputVectorX < 0f)
+        else if (Ctx.MoveInputVectorX < 0)
         {
-            if (Ctx.LastDirection)
-            {
-                Ctx.AccumulatedVelocityX = 0;
-                Ctx.LastDirection = false;
-            }
-
-            Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationAirborne, -Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
-            
+            Ctx.TargetDirection = -3f;
         }
         else if (Ctx.MoveInputVectorX == 0)
         {
             Ctx.TargetDirection = 0;
         
         }
-        
+
+        Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
         Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);
+
+
+       
 
         if (Ctx.Controller2D.collisions.above)
         {

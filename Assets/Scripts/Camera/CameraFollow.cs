@@ -19,6 +19,9 @@ public class CameraFollow : MonoBehaviour
     void LateUpdate()
     {
         Vector3 _desiredPosition = _target.position + _offset;
+
+        // orthographic camera so we dont want camera position to change
+        _desiredPos.z = 0;
         transform.position = Vector3.SmoothDamp(transform.position, _desiredPosition, ref _velocity, _smoothTime);
     }
 }

@@ -1,24 +1,24 @@
 fileFormatVersion: 2
-guid: e0e116bb0570d8e4ca19ac39c398e4d3
+guid: c015d49eedf97a1459d67f81c2a6be75
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -497330613551787218
-    second: VFX for attack 1_0
+      213: 759913713973627244
+    second: VFC for attack 1_0
   - first:
-      213: -5186945202320325167
-    second: VFX for attack 1_1
+      213: 4672157171611921972
+    second: VFC for attack 1_1
   - first:
-      213: 7758636682964612018
-    second: VFX for attack 1_2
+      213: 4612579075079591971
+    second: VFC for attack 1_2
   - first:
-      213: 9159785987965169087
-    second: VFX for attack 1_3
+      213: -1310297974853090864
+    second: VFC for attack 1_3
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -58,13 +58,13 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 8
+  textureType: 0
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -80,7 +80,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -92,7 +92,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -104,7 +104,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -115,7 +115,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: VFX for attack 1_0
+      name: VFC for attack 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -129,14 +129,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e23915321702919f0800000000000000
-      internalID: -497330613551787218
+      spriteID: c6988552f71cb8a00800000000000000
+      internalID: 759913713973627244
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VFX for attack 1_1
+      name: VFC for attack 1_1
       rect:
         serializedVersion: 2
         x: 0
@@ -150,14 +150,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d5c742f1d44408b0800000000000000
-      internalID: -5186945202320325167
+      spriteID: 43ee8b48136d6d040800000000000000
+      internalID: 4672157171611921972
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VFX for attack 1_2
+      name: VFC for attack 1_2
       rect:
         serializedVersion: 2
         x: 0
@@ -171,14 +171,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2b3bb65c4f63cab60800000000000000
-      internalID: 7758636682964612018
+      spriteID: 328d484fa3c230040800000000000000
+      internalID: 4612579075079591971
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VFX for attack 1_3
+      name: VFC for attack 1_3
       rect:
         serializedVersion: 2
         x: 0
@@ -192,8 +192,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fbda34f43d81e1f70800000000000000
-      internalID: 9159785987965169087
+      spriteID: 0d1c7f22fe2e0dde0800000000000000
+      internalID: -1310297974853090864
       vertices: []
       indices: 
       edges: []

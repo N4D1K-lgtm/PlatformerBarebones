@@ -41,6 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 1235909005
+    locked: 0
+  - name: Collision Tiles
+    uniqueID: 490766761
+    locked: 0
+  - name: Decoration Tiles
+    uniqueID: 274157059
+    locked: 0
+  - name: Enemies
+    uniqueID: 2075937823
+    locked: 0
   - name: Player
     uniqueID: 3098354815
     locked: 0

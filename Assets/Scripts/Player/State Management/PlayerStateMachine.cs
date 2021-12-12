@@ -26,6 +26,8 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField]
     private float _maxHorizontalVelocity = 3f;
     [SerializeField]
+    private float _horizontalTolerance = .95f;
+    [SerializeField]
     private float _accelerationStep = .1f;
     [SerializeField]
     private float _jumpHeight = 0.01f;
@@ -77,6 +79,8 @@ public class PlayerStateMachine : MonoBehaviour
     private float _gravity;
     private float _timeScale;
     private float _deltaTime;
+    private float _airborneLerpPoint;
+    private float _groundedLerpPoint;
     private string _debugCurrentState;
     private int _currentAnimationStateHash;
 
@@ -100,10 +104,12 @@ public class PlayerStateMachine : MonoBehaviour
     public float VelocityX { get { return _velocity.x; } set { _velocity.x = value; } }
     public float CurrentMovementY { get { return _currentMovement.y; } set { _currentMovement.y = value; } }
     public float CurrentMovementX { get { return _currentMovement.x; } set { _currentMovement.x = value; } }
+
     // Move input vector is now actually just a float for a 1d axis but im too lazy to change all the references in everyother script atm
     public float MoveInputVectorX { get { return _moveInputX; } set { _moveInputX = value; } }
     public float MaxVerticalVelocity { get { return _maxVerticalVelocity; } }
     public float MaxHorizontalVelocity { get { return _maxHorizontalVelocity; } }
+    public float HorizontalTolerance { get { return _horizontalTolerance; } }
     public float InitialJumpVelocity { get { return _initialJumpVelocity; } }
     public float WallSlideSpeed { get { return _wallSlideSpeed; } }
     public float TimeToWallUnstick { get { return _timeToWallUnstick; } set { _timeToWallUnstick = value;} }
@@ -121,6 +127,8 @@ public class PlayerStateMachine : MonoBehaviour
     public float RollFrameTime { get { return _rollFrameTime; } }
     public float TimeScale { get { return _timeScale; } set { _timeScale = value; } }
     public float DeltaTime { get { return _deltaTime; } }
+    public float AirborneLerpPoint { get { return _airborneLerpPoint; } }
+    public float GroundedLerpPoint { get { return _groundedLerpPoint; } }
     public bool IsMovementPressed { get { return _isMovementPressed; } }
     public bool IsRollDashPressed { get { return _isRollDashPressed; } }
     public bool IsRollFinished { get { return _isRollFinished; } set { _isRollFinished = value; } }
@@ -173,11 +181,12 @@ public class PlayerStateMachine : MonoBehaviour
         _dashSpeed = _dashDistance / _dashTime;
         _rollSpeed = _rollDistance / _rollTime;
 
+        _airborneLerpPoint = CalculateInterpolationPoint(_accelerationAirborne);
+        _groundedLerpPoint = CalculateInterpolationPoint(_accelerationGrounded);
+
         // there are 20 animation frames for the roll
         _rollFrameTime = 20 / (_rollTime * 60);
 
-        // true = right,  false = left
-        _lastDirection = true;
         for (int i = 0; i <_animationStates.Length; i++)
         {
             int hash = Animator.StringToHash("Base Layer." + _animationStates[i]);
@@ -246,18 +255,19 @@ public class PlayerStateMachine : MonoBehaviour
         
         if (value >= 0)
         {
-            result = maxspeed * (1 - Mathf.Pow(acceleration, -value));
+            result = (maxspeed / _horizontalTolerance) * (1 - Mathf.Pow(acceleration, -value));
         } else if (value < 0)
         {
-            result = -maxspeed * (1 - Mathf.Pow(acceleration, value));
+            result = (-maxspeed / _horizontalTolerance) * (1 - Mathf.Pow(acceleration, value));
         }  
 
-        
-      
-       
         return result;
     }
-
+    
+    public float CalculateInterpolationPoint (float acceleration)
+    {
+        return -(Mathf.Log(1 - _horizontalTolerance) / Mathf.Log(acceleration));
+    }
 
     // response methods to input actions
     public void OnJump(InputAction.CallbackContext context)

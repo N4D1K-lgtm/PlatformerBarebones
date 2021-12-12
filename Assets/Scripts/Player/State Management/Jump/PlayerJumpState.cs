@@ -66,11 +66,11 @@ public class PlayerJumpState : PlayerBaseState
     {
         if (Ctx.MoveInputVectorX > 0)
         {
-            Ctx.TargetDirection = 3f;
+            Ctx.TargetDirection = Ctx.AirborneLerpPoint;
         }
         else if (Ctx.MoveInputVectorX < 0)
         {
-            Ctx.TargetDirection = -3f;
+            Ctx.TargetDirection = -Ctx.AirborneLerpPoint;
         }
         else if (Ctx.MoveInputVectorX == 0)
         {

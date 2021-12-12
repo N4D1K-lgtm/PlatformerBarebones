@@ -31,10 +31,10 @@ public class PlayerWalkState : PlayerBaseState
 
         if (Ctx.MoveInputVectorX > 0) 
         {
-            Ctx.TargetDirection = 3f; 
+            Ctx.TargetDirection = Ctx.GroundedLerpPoint;
         } else if (Ctx.MoveInputVectorX < 0 )
         {
-            Ctx.TargetDirection = -3f;
+            Ctx.TargetDirection = -Ctx.GroundedLerpPoint;
         }
         Ctx.CurrentMovementX = Ctx.CalculateHorizontalMovement(Ctx.AccumulatedVelocityX, Ctx.AccelerationGrounded, Ctx.MaxHorizontalVelocity) * Ctx.DeltaTime;
         Ctx.AccumulatedVelocityX = Mathf.MoveTowards(Ctx.AccumulatedVelocityX, Ctx.TargetDirection, Ctx.AccelerationStep);

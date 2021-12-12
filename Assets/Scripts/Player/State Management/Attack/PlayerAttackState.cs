@@ -20,12 +20,12 @@ public class PlayerAttackState : PlayerBaseState
         Ctx.DebugCurrentState = "Attack";
 
         // change animation state
-        Ctx.ChangeAnimationState("Attack");
+        Ctx.ChangeAnimationState("Attack_1");
 
 
-        // initialize and call roll coroutinerollCoroutine = Ctx.WaitCoroutine(Ctx.RollTime, Ctx.IsRollFinished);
+        Ctx.CurrentMovementY = -0.05f;
 
-        
+
     }
 
     // UpdateState(); is called everyframe inside of the Update(); function of the currentContext (PlayerStateMachine.cs)
@@ -39,18 +39,9 @@ public class PlayerAttackState : PlayerBaseState
     // UpdateState(); is called everyframe inside of the LateUpdate(); function of the currentContext (PlayerStateMachine.cs)
     public override void UpdateStatePhysics()
     {
-        if (!Ctx.Controller2D.collisions.below)
-        {
-            Ctx.CurrentMovementY = Ctx.VelocityY * Ctx.DeltaTime + .5f * Ctx.Gravity * Ctx.DeltaTime * Ctx.DeltaTime;
-            // Calculate new _velocityY from gravity and timestep
-            Ctx.VelocityY += (Ctx.Gravity * Ctx.DeltaTime);
-            // Clamp vertical velocity in between +/- of maxVerticalVelocity;
-            Ctx.CurrentMovementY = Mathf.Clamp(Ctx.CurrentMovementY, -Ctx.MaxVerticalVelocity, Ctx.MaxVerticalVelocity);
-        }
-        else
-        {
-            Ctx.CurrentMovementY = -0.05f;
-        }
+        
+        
+        
 
     }
 
@@ -68,13 +59,6 @@ public class PlayerAttackState : PlayerBaseState
     // called in the current state's UpdateState() method
     public override void CheckSwitchStates()
     {
-        if (Ctx.IsRollFinished && !Ctx.Controller2D.collisions.below)
-        {
-            SwitchState(Factory.Airborne());
-        }
-        else if (Ctx.IsRollFinished && Ctx.Controller2D.collisions.below)
-        {
-            SwitchState(Factory.Grounded());
-        }
+        
     }
 }

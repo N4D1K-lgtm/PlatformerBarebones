@@ -58,6 +58,7 @@ public class PlayerStateMachine : MonoBehaviour
     private bool _isJumpPressed;
     private bool _isMovementPressed;
     private bool _isRollDashPressed;
+    private bool _isAttackPressed;
     private bool _isDashFinished;
     private bool _isRollFinished;
     private bool _isJumpEnabled;
@@ -134,6 +135,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool IsRollFinished { get { return _isRollFinished; } set { _isRollFinished = value; } }
     public bool IsDashFinished { get { return _isDashFinished; } set { _isDashFinished = value; } }
     public bool IsJumpPressed { get { return _isJumpPressed; } }
+    public bool IsAttackPressed { get { return _isAttackPressed; } }
     public bool RequireJumpPressed { get { return _requireJumpPressed; } set { _requireJumpPressed = value; } }
     public bool RequireRollDashPressed { get { return _requireRollDashPressed; } set { _requireRollDashPressed = value; } }
     public bool CanWallJump { get { return _canWallJump; } set { _canWallJump = value; } }
@@ -168,6 +170,8 @@ public class PlayerStateMachine : MonoBehaviour
         playerActionControls.Gameplay.Move.canceled += context => OnMove(context);
         playerActionControls.Gameplay.RollDash.performed += context => OnRollDash(context);
         playerActionControls.Gameplay.RollDash.canceled += context => OnRollDash(context);
+        playerActionControls.Gameplay.Attack.performed += context => OnAttack(context);
+        playerActionControls.Gameplay.Attack.canceled += context => OnAttack(context);
 
         // misc variables
         _jumpHeight = 2.5f;
@@ -308,4 +312,17 @@ public class PlayerStateMachine : MonoBehaviour
             _requireRollDashPressed = false;
         }
     }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            _isAttackPressed = true;
+        }
+        else if (context.canceled)
+        {
+            _isAttackPressed = false;
+        }
+    }
+    
 }

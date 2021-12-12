@@ -67,18 +67,23 @@ public class PlayerGroundedState : PlayerBaseState
     {
         // if player is not grounded switch to airborne state
         if (!Ctx.Controller2D.collisions.below)
-            {
-                SwitchState(Factory.Airborne());
-            } 
+        {
+            SwitchState(Factory.Airborne());
+        }
         // if player is grounded and jump is pressed, switch to jump state
         else if (Ctx.IsJumpPressed && !Ctx.RequireJumpPressed)
-            {
-                SwitchState(Factory.Jump());
-            }
+        {
+            SwitchState(Factory.Jump());
+        } 
+        // if player is grounded and attack is pressed swiwtch to attack state
+        else if (Ctx.IsAttackPressed) 
+        {
+            SwitchState(Factory.Attack());
+        } 
         // if player is grounded and roll is pressed switch to roll
         else if (Ctx.IsRollDashPressed && !Ctx.RequireRollDashPressed)
-            {
-                SwitchState(Factory.Roll());
-            }
+        {
+            SwitchState(Factory.Roll());
+        }
     }
 }
